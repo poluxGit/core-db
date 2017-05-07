@@ -5,13 +5,28 @@ ___
 
 ## Informations sur la structure de la base de données
 
-
 Version Min MySQL : TODEF
 GIT_URL
 
-
 ___
 
+## Releases Notes
+
+@TODO
+* [ ] Internal : Récupération des valeurs précédentes des metatdonnées (Version/Revision).
+* [ ] Internal : Duplication des liens vers Cat,Tier,Fic quand Version/revision d'un document.
+
+### MyECM - alpha_01 - Released
+
+* [x] DB Management : Triggers
+* [x] Data Management : Procédures stockées pour gestion document & Functions (Version/Revision OK)
+* [x] Data Management : Procédures stockées pour gestion des liens Document/Tables de références (Catégories,Tiers,Fichiers)
+* [x] Internal : Instanciation automatique des metadonnées (sans récupération de valeurs)
+
+
+
+
+## Technical Documentation
 ### Prefix des objects
 
 | Prefix     | Description   | Commentaires  |

@@ -18,8 +18,12 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `myecm`;
+
 INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'ADMIN', 'Administratif', 'Documents Administratifs.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'PRO', 'Professionel', 'Documents Professionnels.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'FINACR', 'Finances', 'Documents Financiers.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'LOGMT', 'Logement', 'Documents relatifs au(x) logement(s).', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'TRANSPT', 'Transport', 'Documents relatifs au(x) transport(s).', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 
 COMMIT;
 
@@ -29,9 +33,13 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `myecm`;
+
 INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'EDF', 'Electricité de France', 'Fournisseur d\'énergie', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'ARCOLEIMMO', 'Agence ARCOLE Immobilier', 'Arcole Immo - Mme Déficis', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'TRESORPUBLIC', 'Trésor Public', 'Administration des finances', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'LIBEA', 'Libéa', 'Assurance Auto & Habitation', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'EASYJET', 'EaysJet', 'Compagnie Aérienne LowCost.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'AF', 'Air France', 'Compagnie Aérienne Air france.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 
 COMMIT;
 
@@ -41,16 +49,16 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `myecm`;
-INSERT INTO `tref_typesdoc` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'AECH', 'Avis d\'échéance', 'Avis d\'échéance.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tref_typesdoc` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'AIMP', 'Avis d\'imposition', 'Avis d\'imposition.',  DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tref_typesdoc` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'AREC', 'Avis de réception', 'Avis de réception.',  DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tref_typesdoc` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'ATTS', 'Attestation', 'Attestations diverses.',  DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tref_typesdoc` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'CEMB', 'Carte d\'embarquement', 'Cartes d\'embarquement.',  DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tref_typesdoc` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'CONT', 'Contrat', 'Contrats divers.',  DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tref_typesdoc` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'CORR', 'Correspondance', 'Correspodances diverses.',  DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tref_typesdoc` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'FACT', 'Facture', 'Factures diverses.',  DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tref_typesdoc` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'INFO', 'Information', 'Informations diverses.',  DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tref_typesdoc` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'RBAQ', 'Relevé de Banque', 'Relevés de Banque.',  DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_typesdoc` (`code`, `title`, `description`) VALUES ('AECH', 'Avis d\'échéance', 'Avis d\'échéance.');
+INSERT INTO `tref_typesdoc` (`code`, `title`, `description`) VALUES ('AIMP', 'Avis d\'imposition', 'Avis d\'imposition.');
+INSERT INTO `tref_typesdoc` (`code`, `title`, `description`) VALUES ('AREC', 'Avis de réception', 'Avis de réception.');
+INSERT INTO `tref_typesdoc` (`code`, `title`, `description`) VALUES ('ATTS', 'Attestation', 'Attestations diverses.');
+INSERT INTO `tref_typesdoc` (`code`, `title`, `description`) VALUES ('CEMB', 'Carte d\'embarquement', 'Cartes d\'embarquement.');
+INSERT INTO `tref_typesdoc` (`code`, `title`, `description`) VALUES ('CONT', 'Contrat', 'Contrats divers.');
+INSERT INTO `tref_typesdoc` (`code`, `title`, `description`) VALUES ('CORR', 'Correspondance', 'Correspodances diverses.');
+INSERT INTO `tref_typesdoc` (`code`, `title`, `description`) VALUES ('FACT', 'Facture', 'Factures diverses.');
+INSERT INTO `tref_typesdoc` (`code`, `title`, `description`) VALUES ('INFO', 'Information', 'Informations diverses.');
+INSERT INTO `tref_typesdoc` (`code`, `title`, `description`) VALUES ('RBAQ', 'Relevé de Banque', 'Relevés de Banque.');
 
 COMMIT;
 
