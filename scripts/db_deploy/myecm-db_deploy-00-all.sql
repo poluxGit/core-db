@@ -180,8 +180,8 @@ DROP TABLE IF EXISTS `tobj_fichiers` ;
 CREATE TABLE IF NOT EXISTS `tobj_fichiers` (
   `id` INT ZEROFILL NOT NULL AUTO_INCREMENT,
   `uid` VARCHAR(15) NOT NULL DEFAULT 'NOTDEF',
-  `filename` VARCHAR(20) NOT NULL,
-  `filepath` VARCHAR(400) NOT NULL,
+  `filename` VARCHAR(400) NOT NULL,
+  `filepath` VARCHAR(1000) NOT NULL,
   `filesize` BIGINT NOT NULL DEFAULT 0,
   `mime` VARCHAR(100) NULL DEFAULT NULL,
   `ctime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -499,7 +499,7 @@ DROP procedure IF EXISTS `logDataInsert`;
 
 DELIMITER $$
 USE `myecm`$$
-CREATE PROCEDURE logDataInsert ( IN pStrTableName VARCHAR(100), IN pStrUIDObject VARCHAR(15), IN pStrCode VARCHAR(20))
+CREATE PROCEDURE logDataInsert ( IN pStrTableName VARCHAR(100), IN pStrUIDObject VARCHAR(15), IN pStrCode VARCHAR(1000))
 BEGIN
 	DECLARE lMsg TEXT;
     SET lMsg = CONCAT('Ajout de "',pStrCode,'" dans la tabble "',pStrTableName,'".');
@@ -517,10 +517,10 @@ DROP procedure IF EXISTS `logDataUpdate`;
 
 DELIMITER $$
 USE `myecm`$$
-CREATE PROCEDURE logDataUpdate ( IN pStrTableName VARCHAR(100), IN pStrUIDObject VARCHAR(15), IN pStrCode VARCHAR(20))
+CREATE PROCEDURE logDataUpdate ( IN pStrTableName VARCHAR(100), IN pStrUIDObject VARCHAR(15), IN pStrCode VARCHAR(1000))
 BEGIN
 	DECLARE lMsg TEXT;
-    SET lMsg = CONCAT('Mise à jour de "',pStrCode,'" dans la tabble "',pStrTableName,'".');
+    SET lMsg = CONCAT('Mise à jour de "',pStrCode,'" dans la table "',pStrTableName,'".');
 	INSERT INTO `tlog_events` (`type`, `target`, `message`) VALUES ('DATA_UPDATE', pStrUIDObject, lMsg);
 END$$
 

@@ -28,3 +28,16 @@
 |uuser      | Utilisateur de la dernière mise à jour de la donnée.| Défini à partir du compte de connexion.|eric@%|
 |utime      | Valeur TIMESTAMP de la dernière mise à jour de la donnée.| Défini par le système.|2017-04-24 00:54:12|
 |isActive   | Flag de suppression logique (inactive pour les nouveaux).| Sur action utilisateur.|0 ou 1|
+
+
+## Règles spécifiques sur attributs par table
+
+### Table 'tref_typesdoc_metadata' - Définition des attributs par type de document
+
+Cette table capitalise l'ensemble des définitions de metadonnées liées au(x) type(s) de document.
+
+
+
+| Champ(s) | Définition  | Commentaires |Exemples|
+|:--------:|:-----------:|--------------|--------|
+|json_data        | Paramètre spécifique au format JSON | voir definition plus loin | {'type':'numeric'}|
