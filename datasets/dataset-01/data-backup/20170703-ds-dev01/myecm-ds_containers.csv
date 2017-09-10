@@ -1,0 +1,9 @@
+id,uid,code,rootpath,title,description,ctime,cuser,utime,uuser,isActive,json_data
+0000000001,CTNR-0000000001,DEFAULT_CONTAINER,/volume1/documents/myecm-dev/_imports,Default,"Default Container of Documents","2017-06-05 01:48:44",polux@%,NULL,NULL,1,NULL
+0000000002,CTNR-0000000002,ADMINISTRATIF_CONT,/volume1/documents/myecm-dev/Administratif,Administratif,"Administratif documents container.","2017-06-05 01:48:44",polux@%,NULL,NULL,1,NULL
+0000000003,CTNR-0000000003,LOGEMENT_CONT,/volume1/documents/myecm-dev/Logement,Logement,"Documents relatifs au logement.","2017-06-05 01:48:44",polux@%,NULL,NULL,1,NULL
+0000000004,CTNR-0000000004,FISC_CONT,/volume1/documents/myecm-dev/Fiscalite,Fiscalité,"Documents relatifs à la fiscalité.","2017-06-05 01:48:44",polux@%,NULL,NULL,1,NULL
+0000000005,CTNR-0000000005,BIBLIO_CONT,/volume1/documents/myecm-dev/Biblios,Bibliothèque,"Documents Editeur (Guides,Livres ...).","2017-06-05 01:48:44",polux@%,NULL,NULL,1,NULL
+0000000006,CTNR-0000000006,PRO_CONT,/volume1/documents/myecm-dev/Professionnel,Pro,"Documents pro.","2017-07-01 23:21:52",polux@%,NULL,NULL,1,NULL
+0000000007,CTNR-0000000007,AUT_CONT,/volume1/documents/myecm-dev/Autres,Autres,"Documents autres.","2017-07-01 23:26:06",polux@%,NULL,NULL,1,NULL
+0000000008,CTNR-0000000008,FIN_CONT,/volume1/documents/myecm-dev/Finances,Finances,"Documents financiers.","2017-07-01 23:28:33",polux@%,NULL,NULL,1,NULL

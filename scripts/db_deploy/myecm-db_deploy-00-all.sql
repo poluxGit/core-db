@@ -488,7 +488,12 @@ CREATE TABLE IF NOT EXISTS `vobj_fichiers_notlinked` (`uid` INT, `filename` INT,
 -- -----------------------------------------------------
 -- Placeholder table for view `vobj_documents_lastversrev`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `vobj_documents_lastversrev` (`uid` INT, `code` INT, `version` INT, `revision` INT, `typedoc_code` INT, `ctnr_code` INT, `title` INT, `description` INT, `year` INT, `month` INT, `day` INT, `ctime` INT, `cuser` INT, `utime` INT, `uuser` INT, `isActive` INT, `json_data` INT);
+CREATE TABLE IF NOT EXISTS `vobj_documents_lastversrev` (`uid` INT, `code` INT, `version` INT, `revision` INT, `typedoc_code` INT, `ctnr_code` INT, `title` INT, `description` INT, `year` INT, `month` INT, `day` INT, `ctime` INT, `cuser` INT, `utime` INT, `uuser` INT, `isActive` INT, `json_data` INT, `meta_json` INT, `fic_json` INT, `cat_json` INT, `tier_json` INT);
+
+-- -----------------------------------------------------
+-- Placeholder table for view `vobj_documents_allversrev`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `vobj_documents_allversrev` (`uid` INT, `code` INT, `version` INT, `revision` INT, `typedoc_code` INT, `ctnr_code` INT, `title` INT, `description` INT, `year` INT, `month` INT, `day` INT, `ctime` INT, `cuser` INT, `utime` INT, `uuser` INT, `isActive` INT, `json_data` INT, `meta_json` INT, `fic_json` INT, `cat_json` INT, `tier_json` INT);
 
 -- -----------------------------------------------------
 -- procedure logDataInsert
@@ -791,6 +796,11 @@ creationMeta_loop: loop
     SET metaValue = null;
 	SET newMetaCode = CONCAT('MDOC-',lStrTypeDocCode,'-',LPAD(cast(cptMetaDoc as CHAR),2,'0'),'-',LPAD(cast(iPrevVerDoc as CHAR(10)),2,'0'),'.',LPAD(cast(iPrevRevDoc as CHAR(10)),3,'0'));
 
+	IF iPrevVerDoc <> 1 OR iPrevRevDoc <>1 THEN
+		SELECT value into metaValue FROM tdta_metadata
+        WHERE tdocmeta_code =  lStrMetaCode ORDER BY code DESC LIMIT 1;
+    END IF;
+
 	insert into tdta_metadata (
 			code,
 			typedoc_code,
@@ -814,7 +824,6 @@ end loop creationMeta_loop;
 
 close typedocmeta_cursor;
 
-
 END$$
 
 DELIMITER ;
@@ -832,6 +841,7 @@ CREATE PROCEDURE reviseDocument(IN pStrDocCode VARCHAR(20))
 BEGIN
 
 	DECLARE strDocUID VARCHAR(15);
+    DECLARE iDocID INTEGER;
     DECLARE strNewDocUID VARCHAR(15);
 
     SELECT getLastDocUidFromCode(pStrDocCode) INTO strDocUID;
@@ -864,6 +874,17 @@ BEGIN
 		json_data
 	FROM tobj_documents
 	WHERE uid = strDocUID;
+
+    SELECT LAST_INSERT_ID() INTO iDocID;
+    SELECT uid into strNewDocUID FROM tobj_documents WHERE id = iDocID;
+
+    -- Duplication of Doc -> Tiers Links
+    INSERT INTO tlnk_documents_tiers(doc_uid,tier_uid,isMain)
+    SELECT strNewDocUID,lnktier.tier_uid,lnktier.isMain FROM tlnk_documents_tiers lnktier WHERE lnktier.doc_uid = strDocUID;
+
+    -- Duplication of Doc -> Categories Links
+    INSERT INTO tlnk_documents_categories(doc_uid,cat_uid,isMain)
+    SELECT strNewDocUID,lnkcat.cat_uid,lnkcat.isMain FROM tlnk_documents_categories lnkcat WHERE lnkcat.doc_uid = strDocUID;
 
 END$$
 
@@ -966,6 +987,8 @@ CREATE PROCEDURE versionDocument(IN pStrDocCode VARCHAR(20))
 BEGIN
 
 	DECLARE strDocUID VARCHAR(15);
+    DECLARE iDocID INTEGER;
+    DECLARE strNewDocUID VARCHAR(15);
 
     SELECT getLastDocUidFromCode(pStrDocCode) INTO strDocUID;
 
@@ -997,6 +1020,17 @@ BEGIN
 		`json_data`
 	FROM tobj_documents
 	WHERE uid = strDocUID;
+
+    SELECT LAST_INSERT_ID() INTO iDocID;
+    SELECT uid into strNewDocUID FROM tobj_documents WHERE id = iDocID;
+
+    -- Duplication of Doc -> Tiers Links
+    INSERT INTO tlnk_documents_tiers(doc_uid,tier_uid,isMain)
+    SELECT strNewDocUID,lnktier.tier_uid,lnktier.isMain FROM tlnk_documents_tiers lnktier WHERE lnktier.doc_uid = strDocUID;
+
+    -- Duplication of Doc -> Categories Links
+    INSERT INTO tlnk_documents_categories(doc_uid,cat_uid,isMain)
+    SELECT strNewDocUID,lnkcat.cat_uid,lnkcat.isMain FROM tlnk_documents_categories lnkcat WHERE lnkcat.doc_uid = strDocUID;
 
 
 END$$
@@ -1201,6 +1235,50 @@ END$$
 DELIMITER ;
 
 -- -----------------------------------------------------
+-- procedure addNewDocumentFromFichier
+-- -----------------------------------------------------
+
+USE `myecm`;
+DROP procedure IF EXISTS `addNewDocumentFromFichier`;
+
+DELIMITER $$
+USE `myecm`$$
+CREATE PROCEDURE addNewDocumentFromFichier(IN pStrFicUID VARCHAR(15) , IN pStrTitle VARCHAR(100),IN pStrTypeDocCode VARCHAR(20), IN pIntYear INT)
+BEGIN
+
+	DECLARE strDocCode VARCHAR(20);
+    DECLARE iCountDoc INT;
+
+
+    SELECT count(distinct code) INTO iCountDoc
+    FROM tobj_documents
+    WHERE typedoc_code = pStrTypeDocCode AND year = pIntYear;
+
+	SET strDocCode = CONCAT('D-',pStrTypeDocCode,'-',CONVERT(pIntYear,CHAR),'-',LPAD(CONVERT(iCountDoc+1,CHAR),4,'0'));
+
+    INSERT INTO `tobj_documents`(
+		`code`,
+		`typedoc_code`,
+		`ctnr_code`,
+		`title`,
+		`year`
+	)
+	VALUES
+	(
+		strDocCode,
+		pStrTypeDocCode,
+		'DEFAULT_CONTAINER',
+		pStrTitle,
+		pIntYear
+	);
+
+    CALL addLinkDocumentToFichier(strDocCode, pStrFicUID);
+
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
 -- View `vobj_fichiers_notlinked`
 -- -----------------------------------------------------
 DROP VIEW IF EXISTS `vobj_fichiers_notlinked` ;
@@ -1227,26 +1305,137 @@ DROP VIEW IF EXISTS `vobj_documents_lastversrev` ;
 DROP TABLE IF EXISTS `vobj_documents_lastversrev`;
 USE `myecm`;
 CREATE  OR REPLACE VIEW `vobj_documents_lastversrev` AS
-SELECT `uid`,
-    `code`,
-    `version`,
-    `revision`,
-    `typedoc_code`,
-    `ctnr_code`,
-    `title`,
-    `description`,
-    `year`,
-    `month`,
-    `day`,
-    `ctime`,
-    `cuser`,
-    `utime`,
-    `uuser`,
-    `isActive`,
-    `json_data`
-FROM tobj_documents WHERE uid IN (SELECT getLastDocUidFromCode(code) FROM tobj_documents GROUP BY code) ORDER BY code;
-USE `myecm`;
+SELECT
+        doc.uid AS `uid`,
+        doc.code AS `code`,
+        doc.version AS `version`,
+        doc.revision AS `revision`,
+        doc.typedoc_code AS `typedoc_code`,
+        doc.ctnr_code AS `ctnr_code`,
+        doc.title AS `title`,
+        doc.description AS `description`,
+        doc.year AS `year`,
+        doc.month AS `month`,
+        doc.day AS `day`,
+        doc.ctime AS `ctime`,
+        doc.cuser AS `cuser`,
+        doc.utime AS `utime`,
+        doc.uuser AS `uuser`,
+        doc.isActive AS `isActive`,
+        doc.json_data AS `json_data`,
+        CONCAT('[',group_concat(DISTINCT CONCAT('"',meta.uid,'":{code:"',meta.code,'", title:"',meta.title,'",value:"',IFNULL(meta.value,'no value'),'"}') SEPARATOR ', '),']') as meta_json,
+        CONCAT('[',group_concat(DISTINCT CONCAT('"',lnkfic.order_number,'":{ uid:"',lnkfic.fic_uid,'"}') SEPARATOR ', '),']') as fic_json,
+        CONCAT('[',group_concat( DISTINCT CONCAT('"',lnkcat.cat_uid,'"') SEPARATOR ', '),']') as cat_json,
+        CONCAT('[',group_concat( DISTINCT CONCAT('"',lnktiers.tier_uid,'"') SEPARATOR ', '),']') as tier_json
+    FROM
+        tobj_documents doc
+        LEFT JOIN tdta_metadata meta ON meta.doc_uid = doc.uid
+        LEFT JOIN tlnk_documents_fichiers lnkfic ON lnkfic.doc_code = doc.code
+        LEFT JOIN tlnk_documents_categories lnkcat ON lnkcat.doc_uid = doc.uid
+        LEFT JOIN tlnk_documents_tiers lnktiers ON lnktiers.doc_uid = doc.uid
+    WHERE
+        doc.uid IN (SELECT
+                GETLASTDOCUIDFROMCODE(tobj_documents.code)
+            FROM
+                tobj_documents
+            GROUP BY tobj_documents.code)
+	GROUP BY
+		doc.uid,
+		doc.code,
+		doc.version,
+		doc.revision,
+		doc.typedoc_code,
+		doc.ctnr_code,
+		doc.title,
+		doc.description,
+		doc.year,
+		doc.month,
+		doc.day,
+		doc.ctime,
+		doc.cuser,
+		doc.utime,
+		doc.uuser,
+		doc.isActive,
+		doc.json_data
+  ORDER BY doc.`code`;
 
+-- -----------------------------------------------------
+-- View `vobj_documents_allversrev`
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `vobj_documents_allversrev` ;
+DROP TABLE IF EXISTS `vobj_documents_allversrev`;
+USE `myecm`;
+CREATE  OR REPLACE VIEW `vobj_documents_allversrev` AS
+SELECT
+        doc.uid AS `uid`,
+        doc.code AS `code`,
+        doc.version AS `version`,
+        doc.revision AS `revision`,
+        doc.typedoc_code AS `typedoc_code`,
+        doc.ctnr_code AS `ctnr_code`,
+        doc.title AS `title`,
+        doc.description AS `description`,
+        doc.year AS `year`,
+        doc.month AS `month`,
+        doc.day AS `day`,
+        doc.ctime AS `ctime`,
+        doc.cuser AS `cuser`,
+        doc.utime AS `utime`,
+        doc.uuser AS `uuser`,
+        doc.isActive AS `isActive`,
+        doc.json_data AS `json_data`,
+        CONCAT('[',group_concat(DISTINCT CONCAT('"',meta.uid,'":{code:"',meta.code,'", title:"',meta.title,'",value:"',IFNULL(meta.value,'no value'),'"}') SEPARATOR ', '),']') as meta_json,
+        CONCAT('[',group_concat(DISTINCT CONCAT('"',lnkfic.order_number,'":{ uid:"',lnkfic.fic_uid,'"}') SEPARATOR ', '),']') as fic_json,
+        CONCAT('[',group_concat( DISTINCT CONCAT('"',lnkcat.cat_uid,'"') SEPARATOR ', '),']') as cat_json,
+        CONCAT('[',group_concat( DISTINCT CONCAT('"',lnktiers.tier_uid,'"') SEPARATOR ', '),']') as tier_json
+    FROM
+        tobj_documents doc
+        LEFT JOIN tdta_metadata meta ON meta.doc_uid = doc.uid
+        LEFT JOIN tlnk_documents_fichiers lnkfic ON lnkfic.doc_code = doc.code
+        LEFT JOIN tlnk_documents_categories lnkcat ON lnkcat.doc_uid = doc.uid
+        LEFT JOIN tlnk_documents_tiers lnktiers ON lnktiers.doc_uid = doc.uid
+    GROUP BY
+		doc.uid,
+		doc.code,
+		doc.version,
+		doc.revision,
+		doc.typedoc_code,
+		doc.ctnr_code,
+		doc.title,
+		doc.description,
+		doc.year,
+		doc.month,
+		doc.day,
+		doc.ctime,
+		doc.cuser,
+		doc.utime,
+		doc.uuser,
+		doc.isActive,
+		doc.json_data
+  ORDER BY doc.`code` ASC, doc.version DESC, doc.revision DESC;
+
+-- -----------------------------------------------------
+-- View `vobj_documents_allversrev`
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `vobj_fichiers_src_target` ;
+DROP TABLE IF EXISTS `vobj_fichiers_src_target`;
+USE `myecm`;
+CREATE  VIEW `vobj_fichiers_src_target` AS
+select
+  tdoc.code AS `DOC_CODE`,
+  tdoc.code AS `DOC_UID`,
+  tfic.uid AS `FIC_UID`,
+  ldf.order_number AS `FIC_ORDER_FOR_DOC`,
+  concat(tfic.filepath,'/',tfic.filename) AS `SRC_FILEPATH`,
+  concat(tcont.rootpath,'/',tdoc.year,if((tdoc.month = 0),'',lpad(cast(tdoc.month as char charset utf8),2,'0')),if((tdoc.day = 0),'',lpad(cast(tdoc.day as char charset utf8),2,'0')),'_',tdoc.typedoc_code,if(isnull(trtier.code),'_',concat('-',trtier.code,'_')),replace(tdoc.title,' ',''),'-',lpad(cast(ldf.order_number as char charset utf8),2,'0'),substr(tfic.filename,-(4))) AS `TRGT_FILEPATH`,
+  concat(tdoc.year,if((tdoc.month = 0),'',lpad(cast(tdoc.month as char charset utf8),2,'0')),if((tdoc.day = 0),'',lpad(cast(tdoc.day as char charset utf8),2,'0')),'_',tdoc.typedoc_code,if(isnull(trtier.code),'_',concat('-',trtier.code,'_')),replace(tdoc.title,' ',''),'-',lpad(cast(ldf.order_number as char charset utf8),2,'0'),substr(tfic.filename,-(4))) AS `TRGT_FILENAME`,
+  tcont.rootpath AS `TRGT_PATH`
+from (((((tlnk_documents_fichiers ldf left join tobj_fichiers tfic on ((tfic.uid = ldf.fic_uid))) left join tobj_documents tdoc on((tdoc.code = ldf.doc_code))) left join tdta_containers tcont on((tcont.code = tdoc.ctnr_code))) left join tlnk_documents_tiers tdt on(((tdt.doc_uid = tdoc.uid) and (tdt.isMain = 1)))) left join tref_tiers trtier on((trtier.uid = tdt.tier_uid)))
+WHERE NOT concat(tfic.filepath,'/',tfic.filename) = concat(tcont.rootpath,'/',tdoc.year,if((tdoc.month = 0),'',lpad(cast(tdoc.month as char charset utf8),2,'0')),if((tdoc.day = 0),'',lpad(cast(tdoc.day as char charset utf8),2,'0')),'_',tdoc.typedoc_code,if(isnull(trtier.code),'_',concat('-',trtier.code,'_')),replace(tdoc.title,' ',''),'-',lpad(cast(ldf.order_number as char charset utf8),2,'0'),substr(tfic.filename,-(4))) ;
+
+-- -----------------------------------------------------
+-- Triggers
+-- -----------------------------------------------------
 DELIMITER $$
 
 USE `myecm`$$
@@ -1423,7 +1612,7 @@ DROP TRIGGER IF EXISTS `tobj_fichiers_AFTER_INSERT` $$
 USE `myecm`$$
 CREATE DEFINER = CURRENT_USER TRIGGER `myecm`.`tobj_fichiers_AFTER_INSERT` AFTER INSERT ON `tobj_fichiers` FOR EACH ROW
 BEGIN
-	CALL logDataInsert('tobj_fichiers',NEW.uid,NEW.filepath);
+	CALL logDataInsert('tobj_fichiers',NEW.uid,CONCAT(NEW.filepath,'/',NEW.filename));
 END$$
 
 

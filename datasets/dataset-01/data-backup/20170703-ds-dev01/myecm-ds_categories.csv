@@ -1,0 +1,12 @@
+id,uid,code,title,description,ctime,cuser,utime,uuser,isActive,json_data
+0000000001,CAT-ADMIN,ADMIN,Administratif,"Documents Administratifs.","2017-06-05 01:48:44",polux@%,NULL,NULL,1,NULL
+0000000002,CAT-PRO,PRO,Professionel,"Documents Professionnels.","2017-06-05 01:48:44",polux@%,NULL,NULL,1,NULL
+0000000003,CAT-FINACR,FINACR,Finances,"Documents Financiers.","2017-06-05 01:48:44",polux@%,NULL,NULL,1,NULL
+0000000004,CAT-LOGMT,LOGMT,Logement,"Documents relatifs au(x) logement(s).","2017-06-05 01:48:44",polux@%,NULL,NULL,1,NULL
+0000000005,CAT-TRANSPT,TRANSPT,Transport,"Documents relatifs au(x) transport(s).","2017-06-05 01:48:44",polux@%,NULL,NULL,1,NULL
+0000000006,CAT-ECIVIL,ECIVIL,"Etat civil","Documents relatifs à l'état civil.","2017-06-05 01:48:44",polux@%,NULL,NULL,1,NULL
+0000000007,CAT-SANTE,SANTE,Santé,"Documents relatifs à la santé.","2017-06-05 01:48:44",polux@%,NULL,NULL,1,NULL
+0000000008,CAT-FISC,FISC,Fiscalité,"Documents relatifs à la Fiscalité.","2017-06-05 01:48:44",polux@%,NULL,NULL,1,NULL
+0000000009,CAT-EBOOK,EBOOK,E-Books,"E-Books, Livres, Guides en tout genre.","2017-06-05 01:57:58",polux@%,NULL,NULL,1,NULL
+0000000010,CAT-LOISIRS,LOISIRS,Loisirs,Loisirs,"2017-06-05 02:02:20",polux@%,NULL,NULL,1,NULL
+0000000011,CAT-GAMING,GAMING,Gaming,Gaming.,"2017-06-05 02:03:19",polux@%,NULL,NULL,1,NULL

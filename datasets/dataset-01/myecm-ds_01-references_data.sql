@@ -1,5 +1,5 @@
-
 -- -----------------------------------------------------
+
 -- Data for table `tapp_users`
 -- -----------------------------------------------------
 START TRANSACTION;
@@ -21,11 +21,11 @@ USE `myecm`;
 
 INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'ADMIN', 'Administratif', 'Documents Administratifs.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'PRO', 'Professionel', 'Documents Professionnels.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'FINACR', 'Finances', 'Documents Financiers.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'LOGMT', 'Logement', 'Documents relatifs au(x) logement(s).', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'FINACR', 'Finances', 'Documents Financiers.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'TRANSPT', 'Transport', 'Documents relatifs au(x) transport(s).', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'ECIVIL', 'Etat civil', 'Documents relatifs à l\'état civil.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'SANTE', 'Santé', 'Documents relatifs à la santé.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'ECIVIL', 'Etat civil', 'Documents relatifs à l\'état civil.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'FISC', 'Fiscalité', 'Documents relatifs à la Fiscalité.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'EBOOK', 'E-Books', 'E-Books, Livres, Guides en tout genre.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tref_categories` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'LOISIRS', 'Loisirs', 'Loisirs en tout genre.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
@@ -49,6 +49,21 @@ INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, 
 INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'CDR', 'Carrier Delastre Rollet', 'Agence Immobilière Lyonnaise.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'NORAUTO', 'Norauto', 'Garagiste.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'BLIZZARD', 'Blizzard', 'Blizzard & Co.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'CS', 'Communication & Systemes', 'Société de Service Informatique', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'CPAM', 'Assurance Maladie', 'Assurance Maladie CPAM.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'AMAZON', 'Amazon', 'Plateforme d\'achat en ligne', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'CEPARGNE', 'Caisse d\'épargne', 'Banque.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'DRSILHAM', 'Dr SILHAM', 'Dentiste / Implantologue.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'MATHON', 'Mathon', 'Equipements de cuisine.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'ENGIE', 'Engie', 'Fournisseur de gaz.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'VIVINTER', 'Vivinter', 'Mutuelle Santé.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'ATRIUMVISION', 'Atrium Vision', 'Centre Ophtalmo.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'MRETLSE', 'Mairie de Toulouse', 'Mairie de Toulouse.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'REPFR', 'République Française', 'République Française.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'APEYRAMAURE', 'Arnaud Peyramaure', 'Arnaud Peyramaure.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'DARTY', 'Darty', 'Enseigne commerciale Electro ménager.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'NORISKO', 'Norisko', 'Garage & Centre de Contrôle technique.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tref_tiers` (`id`, `uid`, `code`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'FNAC', 'Fnac', 'Enseigne multimédia.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 
 COMMIT;
 
@@ -94,17 +109,12 @@ INSERT INTO `tdta_containers` (`id`, `uid`, `code`, `rootpath`, `title`, `descri
 INSERT INTO `tdta_containers` (`id`, `uid`, `code`, `rootpath`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'LOGEMENT_CONT', '/volume1/documents/myecm-dev/Logement', 'Logement', 'Documents relatifs au logement.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tdta_containers` (`id`, `uid`, `code`, `rootpath`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'FISC_CONT', '/volume1/documents/myecm-dev/Fiscalite', 'Fiscalité', 'Documents relatifs à la fiscalité.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 INSERT INTO `tdta_containers` (`id`, `uid`, `code`, `rootpath`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'BIBLIO_CONT', '/volume1/documents/myecm-dev/Biblios', 'Bibliothèque', 'Documents Editeur (Guides,Livres ...).', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-
-INSERT INTO `tdta_containers` (`id`, `uid`, `code`, `rootpath`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'BIBLIO_CONT', '/volume1/documents/myecm-dev/Biblios', 'Bibliothèque', 'Documents Editeur (Guides,Livres ...).', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tdta_containers` (`id`, `uid`, `code`, `rootpath`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'BIBLIO_CONT', '/volume1/documents/myecm-dev/Biblios', 'Bibliothèque', 'Documents Editeur (Guides,Livres ...).', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tdta_containers` (`id`, `uid`, `code`, `rootpath`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'BIBLIO_CONT', '/volume1/documents/myecm-dev/Biblios', 'Bibliothèque', 'Documents Editeur (Guides,Livres ...).', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tdta_containers` (`id`, `uid`, `code`, `rootpath`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'BIBLIO_CONT', '/volume1/documents/myecm-dev/Biblios', 'Bibliothèque', 'Documents Editeur (Guides,Livres ...).', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-INSERT INTO `tdta_containers` (`id`, `uid`, `code`, `rootpath`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'BIBLIO_CONT', '/volume1/documents/myecm-dev/Biblios', 'Bibliothèque', 'Documents Editeur (Guides,Livres ...).', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
-
+INSERT INTO `tdta_containers` (`id`, `uid`, `code`, `rootpath`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'PRO_CONT', '/volume1/documents/myecm-dev/Professionnel', ' ', 'Documents Editeur (Guides,Livres ...).', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tdta_containers` (`id`, `uid`, `code`, `rootpath`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'AUT_CONT', '/volume1/documents/myecm-dev/Autres	Autres', 'Autres', 'Documents divers.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tdta_containers` (`id`, `uid`, `code`, `rootpath`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'FIN_CONT', '/volume1/documents/myecm-dev/Finances', 'Finances', 'Documents financiers.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
+INSERT INTO `tdta_containers` (`id`, `uid`, `code`, `rootpath`, `title`, `description`, `ctime`, `cuser`, `utime`, `uuser`, `isActive`, `json_data`) VALUES (DEFAULT, DEFAULT, 'SANTE_CONT', '/volume1/documents/myecm-dev/Sante', 'Santé', 'Documents Santé.', DEFAULT, DEFAULT, NULL, NULL, DEFAULT, NULL);
 
 COMMIT;
-
-
 -- -----------------------------------------------------
 -- Data for table `tref_typesdoc_metadata`
 -- -----------------------------------------------------
