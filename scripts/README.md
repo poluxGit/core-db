@@ -3,6 +3,16 @@
 ## Project Organization
 
 #### Worskspace Items
+
+|Directory name|Comment|
+|--------------|-------|
+|_old   | Old scripts (out of GIT sync).   |
+|_tmp   |  Temporary  SQL scripts and data.  |
+|bash_cmd   | BASH scripts.   |
+|db_deploy   | All deployement scripts generated.   |
+| releases  | Releases directory.   |
+|generic-business-modles-pattern   | Generic Business Objects Pattern.   |
+|wip   | Work in progress.   | 
 - **scripts**
 -- work-in_progress : ***Generic Script in developpement***
 -- releases : ***Released scripts***

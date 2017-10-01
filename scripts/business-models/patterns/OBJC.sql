@@ -6,13 +6,13 @@ DROP TABLE IF EXISTS `DEFAULT_COMPLEX_OBJTABLE` ;
 
 CREATE TABLE IF NOT EXISTS `DEFAULT_COMPLEX_OBJTABLE` (
   `tid` VARCHAR(30) NOT NULL DEFAULT 'TID-NOTDEF',
-  `bid` VARCHAR(50) UNIQUE NOT NULL DEFAULT 'BID-NOTDEF',
+  `bid` VARCHAR(50) NULL DEFAULT NULL,
   `version` INT NOT NULL DEFAULT 0,
   `revision` INT NOT NULL DEFAULT 0,
   `stitle` VARCHAR(30) NOT NULL DEFAULT 'Short Title not defined',
   `ltitle` VARCHAR(100) NOT NULL DEFAULT 'Long Title not defined',
   `comment` TEXT NULL DEFAULT NULL,
-  `cuser` VARCHAR(100) NOT NULL,
+  `cuser` VARCHAR(100) DEFAULT NULL,
   `ctime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `uuser` VARCHAR(100) NULL DEFAULT NULL,
   `utime` TIMESTAMP NULL DEFAULT NULL,
@@ -49,7 +49,9 @@ BEGIN
 	DECLARE lStrNewTID VARCHAR(30);
   SELECT CORE_GenNewTIDForTable('DEFAULT_COMPLEX_OBJTABLE') INTO lStrNewTID ;
 	SET NEW.tid = lStrNewTID;
-  SET NEW.bid = lStrNewTID;
+  IF NEW.bid IS NULL THEN
+    SET NEW.bid = lStrNewTID;
+  END IF;
 	SET NEW.CUSER = CURRENT_USER;
 END$$
 
@@ -107,3 +109,313 @@ VALUES (
  'DEFAULT_COMPLEX_OBJECT_SIGLE',
  'DEFAULT_COMPLEX_OBJTABLE',
  0);
+
+
+ -- -----------------------------------------------------
+ -- createObject
+ --
+ -- procedure DBPREFIX_createOBJECT_NAME
+ -- -----------------------------------------------------
+ USE `TARGET_SCHEMA`;
+ DROP FUNCTION IF EXISTS `DBPREFIX_createOBJECT_NAME_UCFObject`;
+
+ DELIMITER $$
+ USE `TARGET_SCHEMA`$$
+ CREATE FUNCTION DBPREFIX_createOBJECT_NAME_UCFObject (pStrShortTitle VARCHAR(30),pStrLongTitle VARCHAR(100),pStrComment TEXT) RETURNS VARCHAR(30)
+ BEGIN
+
+ 	DECLARE lStrBID VARCHAR(50);
+  DECLARE lStrTID VARCHAR(30);
+  DECLARE lStrTypeObjectTID VARCHAR(30);
+  DECLARE lStrObjSrcPrefix VARCHAR(5);
+  DECLARE lLongUniqueBID INTEGER;
+
+ 	SELECT obj_prefix,tid INTO lStrObjSrcPrefix,lStrTypeObjectTID
+ 	FROM CORE_TYPEOBJECTS WHERE obj_tablename = 'DEFAULT_COMPLEX_OBJTABLE';
+
+  SELECT COUNT(TID) INTO lLongUniqueBID
+  FROM DEFAULT_COMPLEX_OBJTABLE;
+
+  IF lLongUniqueBID <> 0 THEN
+    SELECT COUNT(bid) INTO lLongUniqueBID
+    FROM DEFAULT_COMPLEX_OBJTABLE GROUP BY bid;
+  END IF;
+
+  SET lStrBID = CONCAT(lStrObjSrcPrefix,'-',LPAD(CONVERT(lLongUniqueBID+1,CHAR),10,'0'));
+
+ 	INSERT INTO `DEFAULT_COMPLEX_OBJTABLE`
+ 	(
+    `bid`,
+    `stitle`,
+    `ltitle`,
+    `comment`
+  )
+ 	VALUES
+ 	(
+ 		lStrBID,
+ 		pStrShortTitle,
+ 		pStrLongTitle,
+ 		pStrComment
+ 	);
+
+  SELECT MAX(tid) INTO lStrTID FROM DEFAULT_COMPLEX_OBJTABLE WHERE bid=lStrBID;
+
+  -- Attribute instanciation
+  INSERT INTO `CORE_ATTROBJECTS`
+  (
+    `stitle`,
+    `ltitle`,
+    `obj_tid`,
+    `adef_tid`,
+    `attr_value`,
+    `comment`
+  )
+  SELECT
+    `stitle`,
+    `ltitle`,
+    lStrTID,
+    `tid`,
+    `attr_default_value`,
+    `comment`
+  FROM `CORE_ATTRDEFS`
+  WHERE `tobj_tid` = lStrTypeObjectTID;
+
+  RETURN lStrTID;
+
+ END$$
+
+ DELIMITER ;
+
+
+ -- -----------------------------------------------------
+ -- getLastVersion
+ --
+ -- procedure DBPREFIX_getLastVersionOnOBJECT_NAME_UCF
+ -- -----------------------------------------------------
+ USE `TARGET_SCHEMA`;
+ DROP FUNCTION IF EXISTS `DBPREFIX_getLastVersionOnOBJECT_NAME_UCF`;
+
+ DELIMITER $$
+ USE `TARGET_SCHEMA`$$
+ CREATE FUNCTION DBPREFIX_getLastVersionOnOBJECT_NAME_UCF (pStrBidObject VARCHAR(50)) RETURNS INTEGER
+ BEGIN
+
+  DECLARE lIntCurrentVersion INTEGER;
+
+  SELECT MAX(version) INTO lIntCurrentVersion FROM DEFAULT_COMPLEX_OBJTABLE WHERE bid = pStrBidObject;
+  RETURN lIntCurrentVersion;
+
+ END$$
+
+ DELIMITER ;
+
+ -- -----------------------------------------------------
+ -- getLastRevision
+ --
+ -- procedure DBPREFIX_getLastRevisionOnOBJECT_NAME_UCF
+ -- -----------------------------------------------------
+ USE `TARGET_SCHEMA`;
+ DROP FUNCTION IF EXISTS `DBPREFIX_getLastRevisionOnOBJECT_NAME_UCF`;
+
+ DELIMITER $$
+ USE `TARGET_SCHEMA`$$
+ CREATE FUNCTION DBPREFIX_getLastRevisionOnOBJECT_NAME_UCF (pStrBidObject VARCHAR(50)) RETURNS INTEGER
+ BEGIN
+
+  DECLARE lIntCurrentRevision INTEGER;
+
+  SELECT MAX(revision) INTO lIntCurrentRevision FROM DEFAULT_COMPLEX_OBJTABLE WHERE bid = pStrBidObject and version=DBPREFIX_getLastVersionOnOBJECT_NAME_UCF(pStrBidObject);
+  RETURN lIntCurrentRevision;
+
+ END$$
+
+ DELIMITER ;
+
+ -- -----------------------------------------------------
+ -- incrementVersion
+ --
+ -- procedure DBPREFIX_incrementVersionOnOBJECT_NAME_UCFObject
+ -- -----------------------------------------------------
+ USE `TARGET_SCHEMA`;
+ DROP FUNCTION IF EXISTS `DBPREFIX_incrementVersionOnOBJECT_NAME_UCFObject`;
+
+ DELIMITER $$
+ USE `TARGET_SCHEMA`$$
+ CREATE FUNCTION DBPREFIX_incrementVersionOnOBJECT_NAME_UCFObject (pStrBidObject VARCHAR(50)) RETURNS VARCHAR(30)
+ BEGIN
+
+   DECLARE lIntCurrentVersion INTEGER;
+   DECLARE lStrTID VARCHAR(30);
+   DECLARE lStrPrevTID VARCHAR(30);
+
+   SELECT DBPREFIX_getLastVersionOnOBJECT_NAME_UCF(pStrBidObject) INTO lIntCurrentVersion;
+
+   SELECT tid INTO lStrPrevTID
+   FROM DEFAULT_COMPLEX_OBJTABLE
+   WHERE
+     bid=pStrBidObject
+     AND version = DBPREFIX_getLastVersionOnOBJECT_NAME_UCF(pStrBidObject)
+     AND revision = DBPREFIX_getLastRevisionOnOBJECT_NAME_UCF(pStrBidObject);
+
+   INSERT INTO `DEFAULT_COMPLEX_OBJTABLE`
+   (
+    `bid`,
+    `version`,
+    `stitle`,
+    `ltitle`,
+    `comment`
+  )
+  SELECT pStrBidObject, lIntCurrentVersion+1, stitle,ltitle,comment
+  FROM DEFAULT_COMPLEX_OBJTABLE
+  WHERE
+    bid=pStrBidObject
+    AND version = DBPREFIX_getLastVersionOnOBJECT_NAME_UCF(pStrBidObject)
+    AND revision = DBPREFIX_getLastRevisionOnOBJECT_NAME_UCF(pStrBidObject);
+
+  SELECT tid INTO lStrTID
+  FROM DEFAULT_COMPLEX_OBJTABLE
+  WHERE
+    bid=pStrBidObject
+    AND version = DBPREFIX_getLastVersionOnOBJECT_NAME_UCF(pStrBidObject)
+    AND revision = DBPREFIX_getLastRevisionOnOBJECT_NAME_UCF(pStrBidObject);
+
+  CALL DBPREFIX_duplicateAttributesOnOBJECT_NAME_UCFObject(lStrPrevTID,lStrTID);
+  CALL DBPREFIX_duplicateLinksOnOBJECT_NAME_UCFObject(lStrPrevTID,lStrTID);
+
+  RETURN lStrTID;
+
+ END$$
+
+ DELIMITER ;
+
+
+ -- -----------------------------------------------------
+ -- incrementRevision
+ --
+ -- procedure DBPREFIX_incrementRevisionOnOBJECT_NAME_UCFObject
+ -- -----------------------------------------------------
+ USE `TARGET_SCHEMA`;
+ DROP FUNCTION IF EXISTS `DBPREFIX_incrementRevisionOnOBJECT_NAME_UCFObject`;
+
+ DELIMITER $$
+ USE `TARGET_SCHEMA`$$
+ CREATE FUNCTION DBPREFIX_incrementRevisionOnOBJECT_NAME_UCFObject(pStrBidObject VARCHAR(50)) RETURNS VARCHAR(30)
+ BEGIN
+
+   DECLARE lIntCurrentRevision INTEGER;
+   DECLARE lStrTID VARCHAR(30);
+   DECLARE lStrPrevTID VARCHAR(30);
+
+   SELECT DBPREFIX_getLastRevisionOnOBJECT_NAME_UCF(pStrBidObject) INTO lIntCurrentRevision;
+
+   SELECT tid INTO lStrPrevTID
+   FROM DEFAULT_COMPLEX_OBJTABLE
+   WHERE
+     bid=pStrBidObject
+     AND version = DBPREFIX_getLastVersionOnOBJECT_NAME_UCF(pStrBidObject)
+     AND revision = DBPREFIX_getLastRevisionOnOBJECT_NAME_UCF(pStrBidObject);
+
+
+
+   INSERT INTO `DEFAULT_COMPLEX_OBJTABLE`
+   (
+    `bid`,
+    `version`,
+    `revision`,
+    `stitle`,
+    `ltitle`,
+    `comment`
+  )
+  SELECT pStrBidObject, version,lIntCurrentRevision+1, stitle,ltitle,comment
+  FROM DEFAULT_COMPLEX_OBJTABLE
+  WHERE
+    bid=pStrBidObject
+    AND version = DBPREFIX_getLastVersionOnOBJECT_NAME_UCF(pStrBidObject)
+    AND revision = DBPREFIX_getLastRevisionOnOBJECT_NAME_UCF(pStrBidObject);
+
+  SELECT tid INTO lStrTID
+  FROM DEFAULT_COMPLEX_OBJTABLE
+  WHERE
+    bid=pStrBidObject
+    AND version = DBPREFIX_getLastVersionOnOBJECT_NAME_UCF(pStrBidObject)
+    AND revision = DBPREFIX_getLastRevisionOnOBJECT_NAME_UCF(pStrBidObject);
+
+  CALL DBPREFIX_duplicateAttributesOnOBJECT_NAME_UCFObject(lStrPrevTID,lStrTID);
+  CALL DBPREFIX_duplicateLinksOnOBJECT_NAME_UCFObject(lStrPrevTID,lStrTID);
+
+  RETURN lStrTID;
+
+ END$$
+
+ DELIMITER ;
+
+ -- -----------------------------------------------------
+ -- duplicateAttributes
+ --
+ -- procedure DBPREFIX_duplicateAttributesOnOBJECT_NAME_UCFObject
+ -- -----------------------------------------------------
+ USE `TARGET_SCHEMA`;
+ DROP PROCEDURE IF EXISTS `DBPREFIX_duplicateAttributesOnOBJECT_NAME_UCFObject`;
+
+ DELIMITER $$
+ USE `TARGET_SCHEMA`$$
+ CREATE PROCEDURE DBPREFIX_duplicateAttributesOnOBJECT_NAME_UCFObject(IN pStrTIDSrc VARCHAR(30),IN pStrTIDDst VARCHAR(30))
+ BEGIN
+
+   INSERT INTO `CORE_ATTROBJECTS`
+   (
+    `bid`,
+    `stitle`,
+    `ltitle`,
+    `obj_tid`,
+    `adef_tid`,
+    `attr_value`,
+    `comment`
+  )
+  SELECT
+    `bid`,
+    `stitle`,
+    `ltitle`,
+    pStrTIDDst,
+    `adef_tid`,
+    `attr_value`,
+    `comment`
+  FROM `CORE_ATTROBJECTS`
+  WHERE obj_tid=pStrTIDSrc;
+
+ END$$
+
+ DELIMITER ;
+
+ -- -----------------------------------------------------
+ -- duplicatLinks
+ --
+ -- procedure DBPREFIX_duplicateLinksOnOBJECT_NAME_UCFObject
+ -- -----------------------------------------------------
+ USE `TARGET_SCHEMA`;
+ DROP PROCEDURE IF EXISTS `DBPREFIX_duplicateLinksOnOBJECT_NAME_UCFObject`;
+
+ DELIMITER $$
+ USE `TARGET_SCHEMA`$$
+ CREATE PROCEDURE DBPREFIX_duplicateLinksOnOBJECT_NAME_UCFObject(IN pStrTIDSrc VARCHAR(30),IN pStrTIDDst VARCHAR(30))
+ BEGIN
+
+-- Links where
+ INSERT INTO `CORE_LINKS`
+ (
+   `bid`,
+   `tlnk_tid`,
+   `objsrc`,
+   `objdst`
+ )
+ SELECT
+   `bid`,
+   `tlnk_tid`,
+   pStrTIDDst,
+   `objdst`
+  FROM `CORE_LINKS`
+  WHERE objsrc=pStrTIDSrc;
+
+ END$$
+
+ DELIMITER ;

@@ -16,9 +16,9 @@ LNK;LNKDOCFIC;Document vers Categorie;DOCUMENT;CATEGORIE;Lien doc vers cat;Lien 
 # Pour les Attributs ATTROBJDEF;;;;;;;;
 # ##############################################################################;;;;;;;;
 # TYPE;OBJECT_NAME;UNIQUE_NAME;SHORT_TITLE;COMMENT;LONG_TITLE;ATTR_TYPE;DEFAULT_VALUE;ATTR_PATTERN
-ATTROBJDEF;DOCUMENT;ATTR_MONTH_DOC;Mois;Mois du document;Mois du document.;INTEGER;01;
+ATTROBJDEF;DOCUMENT;ATTR_MONTH_DOC;Mois;Mois du document;Mois du document.;INTEGER;1;
 ATTROBJDEF;DOCUMENT;ATTR_YEAR_DOC;Annee;Annee du Document;Annee du Document;INTEGER;2017;
-ATTROBJDEF;DOCUMENT;ATTR_DAY_DOC;Jour;Jour du Document;Jour du Document;INTEGER;01;
+ATTROBJDEF;DOCUMENT;ATTR_DAY_DOC;Jour;Jour du Document;Jour du Document;INTEGER;1;
 ATTROBJDEF;FICHIER;ATTR_FILE;Fichier;Fichier source;Fichier source;FILE;;
 ;;;;;;;;
 # Pour les Attributs ATTRLNKDEF;;;;;;;;

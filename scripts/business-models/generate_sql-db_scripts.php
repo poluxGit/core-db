@@ -10,6 +10,7 @@
  *
  */
 
+
  $target_db = '';
  $dbobj_prefix = '';
  $input_csv_file = '';
@@ -31,33 +32,42 @@ function manageLine($pArrData,$pIntRowCount){
 
   if(count($pArrData)>=1 && !empty($pArrData[0]))
   {
+
+    $lStrMsg = '';
     // According type of line (first information)...
     switch(strtoupper($pArrData[0]))
     {
       case 'OBJC':
-          echo "Complex Object Instanciation !\n";
+          $lStrMsg="Complex Object Instanciation !";
           generateComplexObject($pArrData,$output_filename);
           break;
       case 'OBJS':
-          echo "Simple Object Instanciation !\n";
+          $lStrMsg="Simple Object Instanciation !";
           generateSimpleObject($pArrData,$output_filename);
         break;
       case 'LNK':
-          echo "Link Instanciation !\n";
+          $lStrMsg="Link Instanciation !";
           generateLink($pArrData,$output_filename);
           break;
       case 'ATTROBJDEF':
-          echo "Attribute on OBJ definition Instanciation !\n";
+          $lStrMsg="Attribute on Object definition creation !";
           generateAttributeDefinitionOnObject($pArrData,$output_filename);
           break;
+      case 'ATTRLNKDEF':
+          $lStrMsg="Attribute on Link definition creation !";
+          generateAttributeDefinitionOnLink($pArrData,$output_filename);
+          break;
       default:
-        echo sprintf("Line %d starting with '%s' ignored!\n",$pIntRowCount,$pArrData[0]);
+        $lStrMsg="Type not identified ! - Line ignored.";
         break;
     }
   }
   else {
-    echo sprintf("Line %d ignored! (%s)\n",$pIntRowCount,$pArrData[0]);
+    $lStrMsg = sprintf("Empty Line => ignored !");
   }
+
+  // Display Message !
+  echo sprintf(" Line %d - ".$lStrMsg." \n",$pIntRowCount);
 }//end manageLine()
 
 
@@ -180,6 +190,14 @@ function generateComplexObject($pArrData,$pStrOutputfile){
   $replacements[$idxfield] = $lStrSiglum;
   $idxfield++;
 
+  $patterns[$idxfield] = '/DBPREFIX/';
+  $replacements[$idxfield] = $dbobj_prefix;
+  $idxfield++;
+
+  $patterns[$idxfield] = '/OBJECT_NAME_UCF/';
+  $replacements[$idxfield] = ucfirst(strtolower($lStrObjectName));
+  $idxfield++;
+
   // preg_replace($patterns, $replacements, $patternContent);
   file_put_contents($pStrOutputfile,preg_replace($patterns, $replacements, $patternContent),FILE_APPEND);
 }//end generateComplexObject()
@@ -287,6 +305,68 @@ function generateLink($pArrData,$pStrOutputfile){
     file_put_contents($pStrOutputfile,preg_replace($patterns, $replacements, $patternContent),FILE_APPEND);
 }//end generateAttributeDefinition()
 
+/**
+ * Generate an attribute definition on object
+ */
+function generateAttributeDefinitionOnLink($pArrData,$pStrOutputfile){
+
+  global $target_db;
+  global $dbobj_prefix;
+
+  // get pattern file ...
+  $patternfile = './patterns/ATTRLNKDEF.sql';
+  $patternContent = file_get_contents($patternfile);
+
+  // ****** Getting & validating CSV Data !
+  // $lStr = $pArrData[];
+  $lStrObjectNameSrc = $pArrData[1];
+  $lStrObjectNameDst = $pArrData[2];
+  $lStrSTitle = $pArrData[3];
+  $lStrComment = $pArrData[4];
+  $lStrLTitle = $pArrData[5];
+  $lStrAttrType = $pArrData[6];
+  $lStrDefault = $pArrData[7];
+  $lStrPattern = $pArrData[8];
+
+  // Parameters to replace !
+  $idxfield = 0;
+  $patterns = array();
+  $replacements = array();
+
+  // INSERT FIELS
+  $patterns[$idxfield] = '/ATTR_TYPEOBJ_TABLENAME_SRC/';
+  $replacements[$idxfield] = $dbobj_prefix.'_'.strtoupper($lStrObjectNameSrc);
+  $idxfield++;
+  $patterns[$idxfield] = '/ATTR_TYPEOBJ_TABLENAME_DST/';
+  $replacements[$idxfield] = $dbobj_prefix.'_'.strtoupper($lStrObjectNameDst);
+  $idxfield++;
+  $patterns[$idxfield] = '/ATTR_STITLE/';
+  $replacements[$idxfield] = $lStrSTitle;
+  $idxfield++;
+  $patterns[$idxfield] = '/ATTR_LTITLE/';
+  $replacements[$idxfield] = $lStrLTitle;
+  $idxfield++;
+  $patterns[$idxfield] = '/ATTR_COMMENT/';
+  $replacements[$idxfield] = $lStrComment;
+  $idxfield++;
+  $patterns[$idxfield] = '/ATTR_TYPE/';
+  $replacements[$idxfield] = $lStrAttrType;
+  $idxfield++;
+  $patterns[$idxfield] = '/ATTR_PATTERN/';
+  $replacements[$idxfield] = $lStrPattern;
+  $idxfield++;
+  $patterns[$idxfield] = '/ATTR_DEFAULT_VALUE/';
+  $replacements[$idxfield] = $lStrDefault;
+  $idxfield++;
+
+
+  // preg_replace($patterns, $replacements, $patternContent);
+  file_put_contents($pStrOutputfile,preg_replace($patterns, $replacements, $patternContent),FILE_APPEND);
+}//end generateAttributeDefinitionOnLink()
+
+
+
+
 // <------------------------- begin of the script -------------------------> //
 $output_filename = '';
 $output_filehandler = null;
@@ -306,7 +386,7 @@ if (($handle = @fopen($input_csv_file, "r")) !== FALSE) {
   // CSV File reading !
   while (($data = fgetcsv($handle, 0, ";")) !== FALSE) {
     $num = count($data);
-    manageLine($data,$row,$output_filename);
+    manageLine($data,$row);
     $row++;
   }
 

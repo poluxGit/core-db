@@ -9,7 +9,7 @@
 -- @author : poluxGit <polux@poluxfr.org>                                     --
 -- -------------------------------------------------------------------------- --
 -- Database version : 00.01                                              --
--- Generation time : 2017-10-01_03:43:23                                                 --
+-- Generation time : 2017-10-01_23:58:41                                                 --
 -- -------------------------------------------------------------------------- --
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
@@ -150,7 +150,7 @@ CREATE TABLE IF NOT EXISTS `CORE_ATTRDEFS` (
   `tid` VARCHAR(30) NOT NULL DEFAULT 'TID-NOTDEF',
   `tlnk_tid` VARCHAR(30) NULL DEFAULT NULL COMMENT 'Type of links concerned',
   `tobj_tid` VARCHAR(30) NULL DEFAULT NULL,
-  `bid` VARCHAR(50) UNIQUE NOT NULL DEFAULT 'BID-NOTDEF',
+  `bid` VARCHAR(50) NULL DEFAULT NULL,
   `stitle` VARCHAR(30) NOT NULL DEFAULT 'Short Title not defined',
   `ltitle` VARCHAR(100) NOT NULL DEFAULT 'Long Title not defined',
   `attr_type` VARCHAR(100) NULL DEFAULT NULL COMMENT 'Type of Attribute definition',
@@ -202,13 +202,14 @@ DROP TABLE IF EXISTS `CORE_ATTROBJECTS` ;
 
 CREATE TABLE IF NOT EXISTS `CORE_ATTROBJECTS` (
   `tid` VARCHAR(30) NOT NULL DEFAULT 'TID-NOTDEF',
-  `bid` VARCHAR(50) UNIQUE NOT NULL DEFAULT 'BID-NOTDEF',
+  `bid` VARCHAR(50) DEFAULT NULL,
   `stitle` VARCHAR(30) NOT NULL DEFAULT 'Short Title not defined',
   `ltitle` VARCHAR(100) NOT NULL DEFAULT 'Long Title not defined',
+  `obj_tid` VARCHAR(30) NULL DEFAULT NULL COMMENT 'Object Unique TID',
   `adef_tid` VARCHAR(30) NOT NULL COMMENT 'Attribute definition key',
   `attr_value` TEXT NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
-  `cuser` VARCHAR(100) NOT NULL,
+  `cuser` VARCHAR(100) NULL DEFAULT NULL,
   `ctime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `uuser` VARCHAR(100) NULL DEFAULT NULL,
   `utime` TIMESTAMP NULL DEFAULT NULL,
@@ -558,6 +559,59 @@ END$$
 
 DELIMITER ;
 
+-- -----------------------------------------------------
+-- procedure CORE_addAttributeDefinitionForALink
+-- -----------------------------------------------------
+
+USE `COREDEV01`;
+DROP procedure IF EXISTS `CORE_addAttributeDefinitionForALink`;
+
+DELIMITER $$
+USE `COREDEV01`$$
+CREATE PROCEDURE CORE_addAttributeDefinitionForALink (IN pTypeObjTableNameSrc VARCHAR(150),IN pTypeObjTableNameDst VARCHAR(150),IN pStrShortTitle VARCHAR(30),IN pStrLongTitle VARCHAR(100),IN pStrComment TEXT, IN pStrAttrType VARCHAR(100), IN pStrAttrPattern VARCHAR(200), IN pStrAttrDefaultValue VARCHAR(1000))
+BEGIN
+
+	DECLARE lStrLnkTID VARCHAR(30);
+	DECLARE lStrObjSrcPrefix VARCHAR(5);
+	DECLARE lStrObjDstPrefix VARCHAR(5);
+
+	SELECT obj_prefix INTO lStrObjSrcPrefix
+	FROM CORE_TYPEOBJECTS WHERE obj_tablename = pTypeObjTableNameSrc;
+
+	SELECT obj_prefix INTO lStrObjDstPrefix
+	FROM CORE_TYPEOBJECTS WHERE obj_tablename = pTypeObjTableNameDst;
+
+	SELECT tid INTO lStrLnkTID
+	FROM CORE_TYPELINKS WHERE bid = CONCAT('TYLNK-',lStrObjSrcPrefix,'_',lStrObjDstPrefix);
+
+	-- TODO Gestion d'erreurs !
+
+	INSERT INTO `CORE_ATTRDEFS`
+	(
+		`tlnk_tid`,
+		`stitle`,
+		`ltitle`,
+		`attr_type`,
+		`attr_pattern`,
+		`attr_default_value`,
+		`comment`,
+		`cuser`)
+	VALUES
+	(
+		lStrLnkTID,
+		pStrShortTitle,
+		pStrLongTitle,
+		pStrAttrType,
+		pStrAttrPattern,
+		pStrAttrDefaultValue,
+		pStrComment,
+		CURRENT_USER
+	);
+
+END$$
+
+DELIMITER ;
+
 -- -------------------------------------------------------------------------- --
 -- From Source file : SQL-TRIG-01.01-ALLCORE_TRIGGERS.sql
 -- -------------------------------------------------------------------------- --
@@ -679,7 +733,9 @@ BEGIN
 	DECLARE lStrTID VARCHAR(30);
   SELECT CORE_GenNewTIDForTable('CORE_ATTRDEFS') INTO lStrTID;
 
-	SET NEW.bid = lStrTID;
+	IF NEW.bid IS NULL THEN
+  	SET NEW.bid = lStrTID;
+	END IF;
 	SET NEW.tid = lStrTID;
   SET NEW.cuser = CURRENT_USER;
 END$$
@@ -720,10 +776,13 @@ USE `COREDEV01`$$
 CREATE DEFINER = CURRENT_USER TRIGGER TRIG_BEFINSERT_CORE_ATTROBJECTS BEFORE INSERT ON `CORE_ATTROBJECTS` FOR EACH ROW
 BEGIN
 	DECLARE lStrTID VARCHAR(30);
-    SELECT CORE_GenNewTIDForTable('CORE_ATTROBJECTS') INTO lStrTID;
+  SELECT CORE_GenNewTIDForTable('CORE_ATTROBJECTS') INTO lStrTID;
 
 	SET NEW.tid = lStrTID;
-    SET NEW.cuser = CURRENT_USER;
+	IF NEW.bid IS NULL THEN
+  	SET NEW.bid = lStrTID;
+	END IF;
+  SET NEW.cuser = CURRENT_USER;
 END$$
 
 
@@ -776,7 +835,9 @@ BEGIN
 	DECLARE lStrNewTID VARCHAR(30);
   SELECT CORE_GenNewTIDForTable('CORE_LINKS') INTO lStrNewTID ;
 	SET NEW.tid = lStrNewTID;
-  SET NEW.bid = lStrNewTID;
+	IF NEW.bid IS NULL THEN
+  	SET NEW.bid = lStrNewTID;
+	END IF;
 	SET NEW.CUSER = CURRENT_USER;
 END$$
 

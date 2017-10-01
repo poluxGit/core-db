@@ -179,3 +179,56 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure CORE_addAttributeDefinitionForALink
+-- -----------------------------------------------------
+
+USE `TARGET_SCHEMA`;
+DROP procedure IF EXISTS `CORE_addAttributeDefinitionForALink`;
+
+DELIMITER $$
+USE `TARGET_SCHEMA`$$
+CREATE PROCEDURE CORE_addAttributeDefinitionForALink (IN pTypeObjTableNameSrc VARCHAR(150),IN pTypeObjTableNameDst VARCHAR(150),IN pStrShortTitle VARCHAR(30),IN pStrLongTitle VARCHAR(100),IN pStrComment TEXT, IN pStrAttrType VARCHAR(100), IN pStrAttrPattern VARCHAR(200), IN pStrAttrDefaultValue VARCHAR(1000))
+BEGIN
+
+	DECLARE lStrLnkTID VARCHAR(30);
+	DECLARE lStrObjSrcPrefix VARCHAR(5);
+	DECLARE lStrObjDstPrefix VARCHAR(5);
+
+	SELECT obj_prefix INTO lStrObjSrcPrefix
+	FROM CORE_TYPEOBJECTS WHERE obj_tablename = pTypeObjTableNameSrc;
+
+	SELECT obj_prefix INTO lStrObjDstPrefix
+	FROM CORE_TYPEOBJECTS WHERE obj_tablename = pTypeObjTableNameDst;
+
+	SELECT tid INTO lStrLnkTID
+	FROM CORE_TYPELINKS WHERE bid = CONCAT('TYLNK-',lStrObjSrcPrefix,'_',lStrObjDstPrefix);
+
+	-- TODO Gestion d'erreurs !
+
+	INSERT INTO `CORE_ATTRDEFS`
+	(
+		`tlnk_tid`,
+		`stitle`,
+		`ltitle`,
+		`attr_type`,
+		`attr_pattern`,
+		`attr_default_value`,
+		`comment`,
+		`cuser`)
+	VALUES
+	(
+		lStrLnkTID,
+		pStrShortTitle,
+		pStrLongTitle,
+		pStrAttrType,
+		pStrAttrPattern,
+		pStrAttrDefaultValue,
+		pStrComment,
+		CURRENT_USER
+	);
+
+END$$
+
+DELIMITER ;

@@ -48,7 +48,9 @@ BEGIN
 
   SELECT CORE_GenNewTIDForTable('DEFAULT_OBJTABLE') INTO lStrNewTID ;
 	SET NEW.tid = lStrNewTID;
-  SET NEW.bid = lStrNewTID;
+  IF NEW.bid IS NULL THEN
+  	SET NEW.bid = lStrNewTID;
+	END IF;
 	SET NEW.CUSER = CURRENT_USER;
 
 END$$

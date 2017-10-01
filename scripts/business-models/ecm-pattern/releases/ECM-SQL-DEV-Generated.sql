@@ -6,13 +6,13 @@ DROP TABLE IF EXISTS `ECM_DOCUMENT` ;
 
 CREATE TABLE IF NOT EXISTS `ECM_DOCUMENT` (
   `tid` VARCHAR(30) NOT NULL DEFAULT 'TID-NOTDEF',
-  `bid` VARCHAR(50) UNIQUE NOT NULL DEFAULT 'BID-NOTDEF',
+  `bid` VARCHAR(50) NULL DEFAULT NULL,
   `version` INT NOT NULL DEFAULT 0,
   `revision` INT NOT NULL DEFAULT 0,
   `stitle` VARCHAR(30) NOT NULL DEFAULT 'Short Title not defined',
   `ltitle` VARCHAR(100) NOT NULL DEFAULT 'Long Title not defined',
   `comment` TEXT NULL DEFAULT NULL,
-  `cuser` VARCHAR(100) NOT NULL,
+  `cuser` VARCHAR(100) DEFAULT NULL,
   `ctime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `uuser` VARCHAR(100) NULL DEFAULT NULL,
   `utime` TIMESTAMP NULL DEFAULT NULL,
@@ -49,7 +49,9 @@ BEGIN
 	DECLARE lStrNewTID VARCHAR(30);
   SELECT CORE_GenNewTIDForTable('ECM_DOCUMENT') INTO lStrNewTID ;
 	SET NEW.tid = lStrNewTID;
-  SET NEW.bid = lStrNewTID;
+  IF NEW.bid IS NULL THEN
+    SET NEW.bid = lStrNewTID;
+  END IF;
 	SET NEW.CUSER = CURRENT_USER;
 END$$
 
@@ -107,6 +109,316 @@ VALUES (
  'DOC',
  'ECM_DOCUMENT',
  0);
+
+
+ -- -----------------------------------------------------
+ -- createObject
+ --
+ -- procedure ECM_createOBJECT_NAME
+ -- -----------------------------------------------------
+ USE `COREDEV01`;
+ DROP FUNCTION IF EXISTS `ECM_createDocumentObject`;
+
+ DELIMITER $$
+ USE `COREDEV01`$$
+ CREATE FUNCTION ECM_createDocumentObject (pStrShortTitle VARCHAR(30),pStrLongTitle VARCHAR(100),pStrComment TEXT) RETURNS VARCHAR(30)
+ BEGIN
+
+ 	DECLARE lStrBID VARCHAR(50);
+  DECLARE lStrTID VARCHAR(30);
+  DECLARE lStrTypeObjectTID VARCHAR(30);
+  DECLARE lStrObjSrcPrefix VARCHAR(5);
+  DECLARE lLongUniqueBID INTEGER;
+
+ 	SELECT obj_prefix,tid INTO lStrObjSrcPrefix,lStrTypeObjectTID
+ 	FROM CORE_TYPEOBJECTS WHERE obj_tablename = 'ECM_DOCUMENT';
+
+  SELECT COUNT(TID) INTO lLongUniqueBID
+  FROM ECM_DOCUMENT;
+
+  IF lLongUniqueBID <> 0 THEN
+    SELECT COUNT(bid) INTO lLongUniqueBID
+    FROM ECM_DOCUMENT GROUP BY bid;
+  END IF;
+
+  SET lStrBID = CONCAT(lStrObjSrcPrefix,'-',LPAD(CONVERT(lLongUniqueBID+1,CHAR),10,'0'));
+
+ 	INSERT INTO `ECM_DOCUMENT`
+ 	(
+    `bid`,
+    `stitle`,
+    `ltitle`,
+    `comment`
+  )
+ 	VALUES
+ 	(
+ 		lStrBID,
+ 		pStrShortTitle,
+ 		pStrLongTitle,
+ 		pStrComment
+ 	);
+
+  SELECT MAX(tid) INTO lStrTID FROM ECM_DOCUMENT WHERE bid=lStrBID;
+
+  -- Attribute instanciation
+  INSERT INTO `CORE_ATTROBJECTS`
+  (
+    `stitle`,
+    `ltitle`,
+    `obj_tid`,
+    `adef_tid`,
+    `attr_value`,
+    `comment`
+  )
+  SELECT
+    `stitle`,
+    `ltitle`,
+    lStrTID,
+    `tid`,
+    `attr_default_value`,
+    `comment`
+  FROM `CORE_ATTRDEFS`
+  WHERE `tobj_tid` = lStrTypeObjectTID;
+
+  RETURN lStrTID;
+
+ END$$
+
+ DELIMITER ;
+
+
+ -- -----------------------------------------------------
+ -- getLastVersion
+ --
+ -- procedure ECM_getLastVersionOnDocument
+ -- -----------------------------------------------------
+ USE `COREDEV01`;
+ DROP FUNCTION IF EXISTS `ECM_getLastVersionOnDocument`;
+
+ DELIMITER $$
+ USE `COREDEV01`$$
+ CREATE FUNCTION ECM_getLastVersionOnDocument (pStrBidObject VARCHAR(50)) RETURNS INTEGER
+ BEGIN
+
+  DECLARE lIntCurrentVersion INTEGER;
+
+  SELECT MAX(version) INTO lIntCurrentVersion FROM ECM_DOCUMENT WHERE bid = pStrBidObject;
+  RETURN lIntCurrentVersion;
+
+ END$$
+
+ DELIMITER ;
+
+ -- -----------------------------------------------------
+ -- getLastRevision
+ --
+ -- procedure ECM_getLastRevisionOnDocument
+ -- -----------------------------------------------------
+ USE `COREDEV01`;
+ DROP FUNCTION IF EXISTS `ECM_getLastRevisionOnDocument`;
+
+ DELIMITER $$
+ USE `COREDEV01`$$
+ CREATE FUNCTION ECM_getLastRevisionOnDocument (pStrBidObject VARCHAR(50)) RETURNS INTEGER
+ BEGIN
+
+  DECLARE lIntCurrentRevision INTEGER;
+
+  SELECT MAX(revision) INTO lIntCurrentRevision FROM ECM_DOCUMENT WHERE bid = pStrBidObject and version=ECM_getLastVersionOnDocument(pStrBidObject);
+  RETURN lIntCurrentRevision;
+
+ END$$
+
+ DELIMITER ;
+
+ -- -----------------------------------------------------
+ -- incrementVersion
+ --
+ -- procedure ECM_incrementVersionOnDocumentObject
+ -- -----------------------------------------------------
+ USE `COREDEV01`;
+ DROP FUNCTION IF EXISTS `ECM_incrementVersionOnDocumentObject`;
+
+ DELIMITER $$
+ USE `COREDEV01`$$
+ CREATE FUNCTION ECM_incrementVersionOnDocumentObject (pStrBidObject VARCHAR(50)) RETURNS VARCHAR(30)
+ BEGIN
+
+   DECLARE lIntCurrentVersion INTEGER;
+   DECLARE lStrTID VARCHAR(30);
+   DECLARE lStrPrevTID VARCHAR(30);
+
+   SELECT ECM_getLastVersionOnDocument(pStrBidObject) INTO lIntCurrentVersion;
+
+   SELECT tid INTO lStrPrevTID
+   FROM ECM_DOCUMENT
+   WHERE
+     bid=pStrBidObject
+     AND version = ECM_getLastVersionOnDocument(pStrBidObject)
+     AND revision = ECM_getLastRevisionOnDocument(pStrBidObject);
+
+   INSERT INTO `ECM_DOCUMENT`
+   (
+    `bid`,
+    `version`,
+    `stitle`,
+    `ltitle`,
+    `comment`
+  )
+  SELECT pStrBidObject, lIntCurrentVersion+1, stitle,ltitle,comment
+  FROM ECM_DOCUMENT
+  WHERE
+    bid=pStrBidObject
+    AND version = ECM_getLastVersionOnDocument(pStrBidObject)
+    AND revision = ECM_getLastRevisionOnDocument(pStrBidObject);
+
+  SELECT tid INTO lStrTID
+  FROM ECM_DOCUMENT
+  WHERE
+    bid=pStrBidObject
+    AND version = ECM_getLastVersionOnDocument(pStrBidObject)
+    AND revision = ECM_getLastRevisionOnDocument(pStrBidObject);
+
+  CALL ECM_duplicateAttributesOnDocumentObject(lStrPrevTID,lStrTID);
+  CALL ECM_duplicateLinksOnDocumentObject(lStrPrevTID,lStrTID);
+
+  RETURN lStrTID;
+
+ END$$
+
+ DELIMITER ;
+
+
+ -- -----------------------------------------------------
+ -- incrementRevision
+ --
+ -- procedure ECM_incrementRevisionOnDocumentObject
+ -- -----------------------------------------------------
+ USE `COREDEV01`;
+ DROP FUNCTION IF EXISTS `ECM_incrementRevisionOnDocumentObject`;
+
+ DELIMITER $$
+ USE `COREDEV01`$$
+ CREATE FUNCTION ECM_incrementRevisionOnDocumentObject(pStrBidObject VARCHAR(50)) RETURNS VARCHAR(30)
+ BEGIN
+
+   DECLARE lIntCurrentRevision INTEGER;
+   DECLARE lStrTID VARCHAR(30);
+   DECLARE lStrPrevTID VARCHAR(30);
+
+   SELECT ECM_getLastRevisionOnDocument(pStrBidObject) INTO lIntCurrentRevision;
+
+   SELECT tid INTO lStrPrevTID
+   FROM ECM_DOCUMENT
+   WHERE
+     bid=pStrBidObject
+     AND version = ECM_getLastVersionOnDocument(pStrBidObject)
+     AND revision = ECM_getLastRevisionOnDocument(pStrBidObject);
+
+
+
+   INSERT INTO `ECM_DOCUMENT`
+   (
+    `bid`,
+    `version`,
+    `revision`,
+    `stitle`,
+    `ltitle`,
+    `comment`
+  )
+  SELECT pStrBidObject, version,lIntCurrentRevision+1, stitle,ltitle,comment
+  FROM ECM_DOCUMENT
+  WHERE
+    bid=pStrBidObject
+    AND version = ECM_getLastVersionOnDocument(pStrBidObject)
+    AND revision = ECM_getLastRevisionOnDocument(pStrBidObject);
+
+  SELECT tid INTO lStrTID
+  FROM ECM_DOCUMENT
+  WHERE
+    bid=pStrBidObject
+    AND version = ECM_getLastVersionOnDocument(pStrBidObject)
+    AND revision = ECM_getLastRevisionOnDocument(pStrBidObject);
+
+  CALL ECM_duplicateAttributesOnDocumentObject(lStrPrevTID,lStrTID);
+  CALL ECM_duplicateLinksOnDocumentObject(lStrPrevTID,lStrTID);
+
+  RETURN lStrTID;
+
+ END$$
+
+ DELIMITER ;
+
+ -- -----------------------------------------------------
+ -- duplicateAttributes
+ --
+ -- procedure ECM_duplicateAttributesOnDocumentObject
+ -- -----------------------------------------------------
+ USE `COREDEV01`;
+ DROP PROCEDURE IF EXISTS `ECM_duplicateAttributesOnDocumentObject`;
+
+ DELIMITER $$
+ USE `COREDEV01`$$
+ CREATE PROCEDURE ECM_duplicateAttributesOnDocumentObject(IN pStrTIDSrc VARCHAR(30),IN pStrTIDDst VARCHAR(30))
+ BEGIN
+
+   INSERT INTO `CORE_ATTROBJECTS`
+   (
+    `bid`,
+    `stitle`,
+    `ltitle`,
+    `obj_tid`,
+    `adef_tid`,
+    `attr_value`,
+    `comment`
+  )
+  SELECT
+    `bid`,
+    `stitle`,
+    `ltitle`,
+    pStrTIDDst,
+    `adef_tid`,
+    `attr_value`,
+    `comment`
+  FROM `CORE_ATTROBJECTS`
+  WHERE obj_tid=pStrTIDSrc;
+
+ END$$
+
+ DELIMITER ;
+
+ -- -----------------------------------------------------
+ -- duplicatLinks
+ --
+ -- procedure ECM_duplicateLinksOnDocumentObject
+ -- -----------------------------------------------------
+ USE `COREDEV01`;
+ DROP PROCEDURE IF EXISTS `ECM_duplicateLinksOnDocumentObject`;
+
+ DELIMITER $$
+ USE `COREDEV01`$$
+ CREATE PROCEDURE ECM_duplicateLinksOnDocumentObject(IN pStrTIDSrc VARCHAR(30),IN pStrTIDDst VARCHAR(30))
+ BEGIN
+
+-- Links where
+ INSERT INTO `CORE_LINKS`
+ (
+   `bid`,
+   `tlnk_tid`,
+   `objsrc`,
+   `objdst`
+ )
+ SELECT
+   `bid`,
+   `tlnk_tid`,
+   pStrTIDDst,
+   `objdst`
+  FROM `CORE_LINKS`
+  WHERE objsrc=pStrTIDSrc;
+
+ END$$
+
+ DELIMITER ;
 -- -----------------------------------------------------
 -- Table `ECM_CATEGORIE`
 -- -----------------------------------------------------
@@ -157,7 +469,9 @@ BEGIN
 
   SELECT CORE_GenNewTIDForTable('ECM_CATEGORIE') INTO lStrNewTID ;
 	SET NEW.tid = lStrNewTID;
-  SET NEW.bid = lStrNewTID;
+  IF NEW.bid IS NULL THEN
+  	SET NEW.bid = lStrNewTID;
+	END IF;
 	SET NEW.CUSER = CURRENT_USER;
 
 END$$
@@ -260,7 +574,9 @@ BEGIN
 
   SELECT CORE_GenNewTIDForTable('ECM_TIER') INTO lStrNewTID ;
 	SET NEW.tid = lStrNewTID;
-  SET NEW.bid = lStrNewTID;
+  IF NEW.bid IS NULL THEN
+  	SET NEW.bid = lStrNewTID;
+	END IF;
 	SET NEW.CUSER = CURRENT_USER;
 
 END$$
@@ -363,7 +679,9 @@ BEGIN
 
   SELECT CORE_GenNewTIDForTable('ECM_FICHIER') INTO lStrNewTID ;
 	SET NEW.tid = lStrNewTID;
-  SET NEW.bid = lStrNewTID;
+  IF NEW.bid IS NULL THEN
+  	SET NEW.bid = lStrNewTID;
+	END IF;
 	SET NEW.CUSER = CURRENT_USER;
 
 END$$
@@ -431,7 +749,7 @@ CALL CORE_addTypeLinkFromTableName('Document vers Categorie','Lien doc vers cat'
 -- -----------------------------------------------------
 -- Add Link type 'Mois'
 -- -----------------------------------------------------
-CALL CORE_addAttributeDefinitionForAnObject('ECM_DOCUMENT','Mois','Mois du document.','Mois du document','INTEGER','','01');
+CALL CORE_addAttributeDefinitionForAnObject('ECM_DOCUMENT','Mois','Mois du document.','Mois du document','INTEGER','','1');
 -- -----------------------------------------------------
 -- Add Link type 'Annee'
 -- -----------------------------------------------------
@@ -439,8 +757,13 @@ CALL CORE_addAttributeDefinitionForAnObject('ECM_DOCUMENT','Annee','Annee du Doc
 -- -----------------------------------------------------
 -- Add Link type 'Jour'
 -- -----------------------------------------------------
-CALL CORE_addAttributeDefinitionForAnObject('ECM_DOCUMENT','Jour','Jour du Document','Jour du Document','INTEGER','','01');
+CALL CORE_addAttributeDefinitionForAnObject('ECM_DOCUMENT','Jour','Jour du Document','Jour du Document','INTEGER','','1');
 -- -----------------------------------------------------
 -- Add Link type 'Fichier'
 -- -----------------------------------------------------
 CALL CORE_addAttributeDefinitionForAnObject('ECM_FICHIER','Fichier','Fichier source','Fichier source','FILE','','');
+-- TODO
+-- -----------------------------------------------------
+-- Add Link type 'Ordre'
+-- -----------------------------------------------------
+CALL CORE_addAttributeDefinitionForALink('ECM_DOCUMENT','ECM_FICHIER','Ordre','Ordre du document','Ordre du document','INTEGER','','1');
