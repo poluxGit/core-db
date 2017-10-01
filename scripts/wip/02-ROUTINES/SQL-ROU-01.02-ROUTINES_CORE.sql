@@ -62,7 +62,9 @@ BEGIN
     SELECT obj_prefix INTO lStrPrefixObject
     FROM CORE_TYPEOBJECTS WHERE obj_tablename = pStrTableName;
 
-    SELECT count(*) INTO lIntNbRows FROM pStrTableName;
+		select TABLE_ROWS INTO lIntNbRows from information_schema.TABLES
+		where TABLE_NAME=pStrTableName AND TABLE_SCHEMA='TARGET_SCHEMA';
+
     SET lStrNewTID = CONCAT(lStrPrefixObject,'-',LPAD(CONVERT(lIntNbRows+1,CHAR),(29-LENGTH(lStrPrefixObject)),'0'));
 
     RETURN lStrNewTID;
@@ -82,6 +84,98 @@ USE `TARGET_SCHEMA`$$
 CREATE PROCEDURE CORE_RegisterNewTID (IN pStrTID VARCHAR(30),IN pStrTableName VARCHAR(150))
 BEGIN
 	INSERT INTO CORE_TID ( tid, obj_tablename) VALUES (pStrTID,pStrTableName);
+END$$
+
+DELIMITER ;
+
+
+-- -----------------------------------------------------
+-- procedure CORE_addTypeLinkFromTableName
+-- -----------------------------------------------------
+
+USE `TARGET_SCHEMA`;
+DROP procedure IF EXISTS `CORE_addTypeLinkFromTableName`;
+
+DELIMITER $$
+USE `TARGET_SCHEMA`$$
+CREATE PROCEDURE CORE_addTypeLinkFromTableName (IN pStrShortTile VARCHAR(30),IN pStrLongTile VARCHAR(100),IN pStrComment TEXT, IN pStrTableNameParent VARCHAR(150), IN pStrTableNameSon VARCHAR(150))
+BEGIN
+
+	DECLARE lStrObjSrcTID VARCHAR(30);
+	DECLARE lStrObjDstTID VARCHAR(30);
+
+	SELECT tid INTO lStrObjSrcTID
+	FROM CORE_TYPEOBJECTS WHERE obj_tablename = pStrTableNameParent;
+
+	SELECT tid INTO lStrObjDstTID
+	FROM CORE_TYPEOBJECTS WHERE obj_tablename = pStrTableNameSon;
+
+	-- TODO Gestion d'erreurs !
+
+	INSERT INTO `CORE_TYPELINKS`
+	(
+		`stitle`,
+		`ltitle`,
+		`typobj_src`,
+		`typobj_dst`,
+		`comment`,
+		`cuser`
+	)
+	VALUES
+	(
+		pStrShortTile,
+		pStrLongTile,
+		lStrObjSrcTID,
+		lStrObjDstTID,
+		pStrComment,
+		CURRENT_USER
+	);
+END$$
+
+DELIMITER ;
+
+
+-- -----------------------------------------------------
+-- procedure CORE_addAttributeDefinitionForAnObject
+-- -----------------------------------------------------
+
+USE `TARGET_SCHEMA`;
+DROP procedure IF EXISTS `CORE_addAttributeDefinitionForAnObject`;
+
+DELIMITER $$
+USE `TARGET_SCHEMA`$$
+CREATE PROCEDURE CORE_addAttributeDefinitionForAnObject (IN pTypeObjTableName VARCHAR(150),IN pStrShortTitle VARCHAR(30),IN pStrLongTitle VARCHAR(100),IN pStrComment TEXT, IN pStrAttrType VARCHAR(100), IN pStrAttrPattern VARCHAR(200), IN pStrAttrDefaultValue VARCHAR(1000))
+BEGIN
+
+	DECLARE lStrObjTID VARCHAR(30);
+
+	SELECT tid INTO lStrObjTID
+	FROM CORE_TYPEOBJECTS WHERE obj_tablename = pTypeObjTableName;
+
+	-- TODO Gestion d'erreurs !
+
+	INSERT INTO `CORE_ATTRDEFS`
+	(
+		`tobj_tid`,
+		`stitle`,
+		`ltitle`,
+		`attr_type`,
+		`attr_pattern`,
+		`attr_default_value`,
+		`comment`,
+		`cuser`)
+	VALUES
+	(
+		lStrObjTID,
+		pStrShortTitle,
+		pStrLongTitle,
+		pStrAttrType,
+		pStrAttrPattern,
+		pStrAttrDefaultValue,
+		pStrComment,
+		CURRENT_USER
+	);
+
 END$$
 
 DELIMITER ;

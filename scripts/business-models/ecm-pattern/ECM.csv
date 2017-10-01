@@ -1,0 +1,27 @@
+# Pour les Types OBJS & OBJC;;;;;;;;
+# ##############################################################################;;;;;;;;
+# TYPE;UNIQUE_NAME;SHORT_TITLE;COMMENT;LONG_TITLE;SIGLE;PROPAGATE_LNK;;
+OBJC;DOCUMENT;Document;Document ECM;Document ECM;DOC;;;
+OBJS;CATEGORIE;Categorie;Categorie de regroupement de document.;Categorie de regroupement de document.;CAT;;;
+OBJS;TIER;Tier;Tier divers.;Tier divers.;TIE;;;
+OBJS;FICHIER;Fichier;Fichier physique;Fichier Physique;FIC;;;
+;;;;;;;;
+# Pour les Liens LNK;;;;;;;;
+# ##############################################################################;;;;;;;;
+# TYPE;UNIQUE_NAME;SHORT_TITLE;OBJ_PARENT;OBJ_SON;COMMENT;LONG_TITLE;;
+LNK;LNKDOCTIE;Document vers Tiers;DOCUMENT;TIER;Lien logique dun document vers des tiers.;Lien logique dun document vers des tiers.;;
+LNK;LNKDOCFIC;Document vers Fichier;DOCUMENT;FICHIER;Lien logique dun doc vers un fichier.;Lien logique dun doc vers un fichier.;;
+LNK;LNKDOCFIC;Document vers Categorie;DOCUMENT;CATEGORIE;Lien doc vers cat;Lien doc vers cat;;
+;;;;;;;;
+# Pour les Attributs ATTROBJDEF;;;;;;;;
+# ##############################################################################;;;;;;;;
+# TYPE;OBJECT_NAME;UNIQUE_NAME;SHORT_TITLE;COMMENT;LONG_TITLE;ATTR_TYPE;DEFAULT_VALUE;ATTR_PATTERN
+ATTROBJDEF;DOCUMENT;ATTR_MONTH_DOC;Mois;Mois du document;Mois du document.;INTEGER;01;
+ATTROBJDEF;DOCUMENT;ATTR_YEAR_DOC;Annee;Annee du Document;Annee du Document;INTEGER;2017;
+ATTROBJDEF;DOCUMENT;ATTR_DAY_DOC;Jour;Jour du Document;Jour du Document;INTEGER;01;
+ATTROBJDEF;FICHIER;ATTR_FILE;Fichier;Fichier source;Fichier source;FILE;;
+;;;;;;;;
+# Pour les Attributs ATTRLNKDEF;;;;;;;;
+# ##############################################################################;;;;;;;;
+# TYPE;OBJ_PARENT;OBJ_SON;SHORT_TITLE;COMMENT;LONG_TITLE;ATTR_TYPE;DEFAULT_VALUE;ATTR_PATTERN
+ATTRLNKDEF;DOCUMENT;FICHIER;Ordre;Ordre du document;Ordre du document;INTEGER;1;
