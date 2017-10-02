@@ -21,6 +21,30 @@ END$$
 
 DELIMITER ;
 
+
+-- -----------------------------------------------------
+-- function CORE_getTIDObjectTypeFromTableName
+-- -----------------------------------------------------
+
+USE `TARGET_SCHEMA`;
+DROP function IF EXISTS `CORE_getTIDObjectTypeFromTableName`;
+
+DELIMITER $$
+USE `TARGET_SCHEMA`$$
+CREATE FUNCTION CORE_getTIDObjectTypeFromTableName (pStrObjTablename VARCHAR(150)) RETURNS VARCHAR(30)
+BEGIN
+	DECLARE lStrResult VARCHAR(30);
+
+    -- tid, bid, stitle, ltitle, comment, obj_type, obj_prefix, obj_tablename, cuser, ctime, uuser, utime, isActive, obj_type
+    SELECT tid INTO lStrResult
+    FROM CORE_TYPEOBJECTS WHERE obj_tablename = pStrObjTablename;
+
+    RETURN lStrResult;
+END$$
+
+DELIMITER ;
+
+
 -- -----------------------------------------------------
 -- function CORE_GetTablenameFromObjectType
 -- -----------------------------------------------------
