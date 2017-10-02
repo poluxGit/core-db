@@ -5,6 +5,7 @@ OBJC;DOCUMENT;Document;Document ECM;Document ECM;DOC;;;
 OBJS;CATEGORIE;Categorie;Categorie de regroupement de document.;Categorie de regroupement de document.;CAT;;;
 OBJS;TIER;Tier;Tier divers.;Tier divers.;TIE;;;
 OBJS;FICHIER;Fichier;Fichier physique;Fichier Physique;FIC;;;
+OBJS;TYPEDOC;TypeDoc;Type de document;Type de document;TDOC;;;
 ;;;;;;;;
 # Pour les Liens LNK;;;;;;;;
 # ##############################################################################;;;;;;;;
@@ -12,6 +13,7 @@ OBJS;FICHIER;Fichier;Fichier physique;Fichier Physique;FIC;;;
 LNK;LNKDOCTIE;Document vers Tiers;DOCUMENT;TIER;Lien logique dun document vers des tiers.;Lien logique dun document vers des tiers.;;
 LNK;LNKDOCFIC;Document vers Fichier;DOCUMENT;FICHIER;Lien logique dun doc vers un fichier.;Lien logique dun doc vers un fichier.;;
 LNK;LNKDOCFIC;Document vers Categorie;DOCUMENT;CATEGORIE;Lien doc vers cat;Lien doc vers cat;;
+LNK;LNKDOCTDOC;Document vers TypeDoc;DOCUMENT;TYPEDOC;Lien doc vers typedoc;Lien doc vers typedoc;;
 ;;;;;;;;
 # Pour les Attributs ATTROBJDEF;;;;;;;;
 # ##############################################################################;;;;;;;;
@@ -19,8 +21,10 @@ LNK;LNKDOCFIC;Document vers Categorie;DOCUMENT;CATEGORIE;Lien doc vers cat;Lien 
 ATTROBJDEF;DOCUMENT;ATTR_MONTH_DOC;Mois;Mois du document;Mois du document.;INTEGER;1;
 ATTROBJDEF;DOCUMENT;ATTR_YEAR_DOC;Annee;Annee du Document;Annee du Document;INTEGER;2017;
 ATTROBJDEF;DOCUMENT;ATTR_DAY_DOC;Jour;Jour du Document;Jour du Document;INTEGER;1;
+ATTROBJDEF;DOCUMENT;ATTR_TYPEDOC;Type;Type du document;Type du document;TEXT;FACTURE;
 ATTROBJDEF;FICHIER;ATTR_FILE;Fichier;Fichier source;Fichier source;FILE;;
-;;;;;;;;
+ATTROBJDEF;FICHIER;ATTR_FILESIZE;Taille;Taille du fichier;Taille du fichier;LONG;0;
+ATTROBJDEF;FICHIER;ATTR_FILEEXT;Extension;Extension du fichier;Extension du fichier;TEXT;;
 # Pour les Attributs ATTRLNKDEF;;;;;;;;
 # ##############################################################################;;;;;;;;
 # TYPE;OBJ_PARENT;OBJ_SON;SHORT_TITLE;COMMENT;LONG_TITLE;ATTR_TYPE;DEFAULT_VALUE;ATTR_PATTERN
