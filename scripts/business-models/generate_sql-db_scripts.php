@@ -10,7 +10,6 @@
  *
  */
 
-
  $target_db = '';
  $dbobj_prefix = '';
  $input_csv_file = '';

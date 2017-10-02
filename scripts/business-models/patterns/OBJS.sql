@@ -6,11 +6,11 @@ DROP TABLE IF EXISTS `DEFAULT_OBJTABLE` ;
 
 CREATE TABLE IF NOT EXISTS `DEFAULT_OBJTABLE` (
   `tid` VARCHAR(30) NOT NULL DEFAULT 'TID-NOTDEF',
-  `bid` VARCHAR(50) UNIQUE NOT NULL DEFAULT 'BID-NOTDEF',
+  `bid` VARCHAR(50) NULL DEFAULT NULL,
   `stitle` VARCHAR(30) NOT NULL DEFAULT 'Short Title not defined',
   `ltitle` VARCHAR(100) NOT NULL DEFAULT 'Long Title not defined',
   `comment` TEXT NULL DEFAULT NULL,
-  `cuser` VARCHAR(100) NOT NULL,
+  `cuser` VARCHAR(100) DEFAULT NULL,
   `ctime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `uuser` VARCHAR(100) NULL DEFAULT NULL,
   `utime` TIMESTAMP NULL DEFAULT NULL,
@@ -63,6 +63,26 @@ CREATE DEFINER = CURRENT_USER TRIGGER TRIG_AFTINSERT_DEFAULT_OBJTABLE AFTER INSE
 BEGIN
 	CALL LOGS_LogDataEvent_Insert(NEW.tid);
   CALL CORE_RegisterNewTID(NEW.tid,'DEFAULT_OBJTABLE');
+
+  INSERT INTO `CORE_ATTROBJECTS`
+  (
+    `stitle`,
+    `ltitle`,
+    `obj_tid`,
+    `adef_tid`,
+    `attr_value`,
+    `comment`
+  )
+  SELECT
+    `stitle`,
+    `ltitle`,
+    NEW.tid,
+    `tid`,
+    `attr_default_value`,
+    `comment`
+  FROM `CORE_ATTRDEFS`
+  WHERE `tobj_tid` = CORE_getTIDObjectTypeFromTableName('DEFAULT_OBJTABLE');
+
 END$$
 
 

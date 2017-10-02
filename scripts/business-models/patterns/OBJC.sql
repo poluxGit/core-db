@@ -61,8 +61,29 @@ DROP TRIGGER IF EXISTS `TRIG_AFTINSERT_DEFAULT_COMPLEX_OBJTABLE` $$
 USE `TARGET_SCHEMA`$$
 CREATE DEFINER = CURRENT_USER TRIGGER TRIG_AFTINSERT_DEFAULT_COMPLEX_OBJTABLE AFTER INSERT ON DEFAULT_COMPLEX_OBJTABLE FOR EACH ROW
 BEGIN
-	CALL LOGS_LogDataEvent_Insert(NEW.tid);
-    CALL CORE_RegisterNewTID(NEW.tid,'DEFAULT_COMPLEX_OBJTABLE');
+  CALL LOGS_LogDataEvent_Insert(NEW.tid);
+  CALL CORE_RegisterNewTID(NEW.tid,'DEFAULT_COMPLEX_OBJTABLE');
+
+  IF NEW.version = 0 AND NEW.revision = 0 THEN
+    INSERT INTO `CORE_ATTROBJECTS`
+    (
+      `stitle`,
+      `ltitle`,
+      `obj_tid`,
+      `adef_tid`,
+      `attr_value`,
+      `comment`
+    )
+    SELECT
+      `stitle`,
+      `ltitle`,
+      NEW.tid,
+      `tid`,
+      `attr_default_value`,
+      `comment`
+    FROM `CORE_ATTRDEFS`
+    WHERE `tobj_tid` = CORE_getTIDObjectTypeFromTableName('DEFAULT_COMPLEX_OBJTABLE');
+  END IF;
 END$$
 
 
@@ -87,10 +108,6 @@ END$$
 DELIMITER ;
 
 -- -----------------------------------------------------------------------------
--- TODO reviseComplexObject & versionObject
--- -----------------------------------------------------------------------------
-
--- -----------------------------------------------------------------------------
 -- Intégration à la configuration du CORE
 -- -----------------------------------------------------------------------------
 INSERT INTO `CORE_TYPEOBJECTS` (
@@ -109,7 +126,6 @@ VALUES (
  'DEFAULT_COMPLEX_OBJECT_SIGLE',
  'DEFAULT_COMPLEX_OBJTABLE',
  0);
-
 
  -- -----------------------------------------------------
  -- createObject
@@ -159,26 +175,6 @@ VALUES (
  	);
 
   SELECT MAX(tid) INTO lStrTID FROM DEFAULT_COMPLEX_OBJTABLE WHERE bid=lStrBID;
-
-  -- Attribute instanciation
-  INSERT INTO `CORE_ATTROBJECTS`
-  (
-    `stitle`,
-    `ltitle`,
-    `obj_tid`,
-    `adef_tid`,
-    `attr_value`,
-    `comment`
-  )
-  SELECT
-    `stitle`,
-    `ltitle`,
-    lStrTID,
-    `tid`,
-    `attr_default_value`,
-    `comment`
-  FROM `CORE_ATTRDEFS`
-  WHERE `tobj_tid` = lStrTypeObjectTID;
 
   RETURN lStrTID;
 

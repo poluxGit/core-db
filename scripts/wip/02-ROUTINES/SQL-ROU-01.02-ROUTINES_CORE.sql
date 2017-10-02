@@ -70,7 +70,6 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- function CORE_GenNewTIDForTable
 -- -----------------------------------------------------
-
 USE `TARGET_SCHEMA`;
 DROP function IF EXISTS `CORE_GenNewTIDForTable`;
 
@@ -99,7 +98,6 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- procedure CORE_RegisterNewTID
 -- -----------------------------------------------------
-
 USE `TARGET_SCHEMA`;
 DROP procedure IF EXISTS `CORE_RegisterNewTID`;
 
