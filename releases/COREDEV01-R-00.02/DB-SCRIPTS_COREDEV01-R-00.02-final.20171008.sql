@@ -9,7 +9,7 @@
 -- @author : poluxGit <polux@poluxfr.org>                                     --
 -- -------------------------------------------------------------------------- --
 -- Database version : 00.02                                              --
--- Generation time : 2017-10-08_03:33:13                                                 --
+-- Generation time : 2017-10-08_22:36:53                                                 --
 -- -------------------------------------------------------------------------- --
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `CORE_TYPEOBJECTS` (
   `comment` TEXT NULL DEFAULT NULL,
   `obj_prefix` VARCHAR(5) NOT NULL DEFAULT 'NDEF',
   `obj_tablename` VARCHAR(150) NULL DEFAULT NULL,
-  `cuser` VARCHAR(100) NOT NULL DEFAULT 'notdefined',
+  `cuser` VARCHAR(100) NULL DEFAULT NULL,
   `ctime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `uuser` VARCHAR(100) NULL DEFAULT NULL,
   `utime` TIMESTAMP NULL DEFAULT NULL,
