@@ -37,7 +37,7 @@ ___
 | tapp_      | Table de de données applicatives.      |    -|
 | tdta_      | Table de de données autres.      |    -|
 
-### Concepts transverses de l'organisation et définition des données
+### Concepts transverses de l'organisation et définition des données - TODO UPDATE - OBSO
 
 Champs internes et commun à toutes les tables de la base de données :
 
