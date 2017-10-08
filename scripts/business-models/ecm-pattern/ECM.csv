@@ -30,8 +30,7 @@ ATTROBJDEF;FICHIER;ATTR_FILEPATH;Repertoire;Repertoire du fichier;Repertoire du 
 ATTROBJDEF;CATEGORIE;ATTR_GRP_CAT;Groupe;Groupe de categorie;Groupe de categorie;TEXT;Non defini;
 ATTROBJDEF;TIER;ATTR_GRP_TIER;Groupe;Groupe de tier;Groupe de tier;TEXT;Non defini;
 ATTROBJDEF;LIBRAIRIE;ATTR_RACINE;Repertoire;Repertoire racine de la librairie;Repertoire racine de la librairie;DIR;;
-ATTROBJDEF;TIER;ATTR_;Groupe;Groupe de tier;Groupe de tier;TEXT;Non defini;
-ATTROBJDEF;TIER;ATTR_GRP_TIER;Groupe;Groupe de tier;Groupe de tier;TEXT;Non defini;
+ATTROBJDEF;TYPEDOC;ATTR_TDOC_SIGLE;Sigle;Sigle du type de doc;Sigle du type de doc;TEXT;Non defini;
 ;;;;;;;;
 # Pour les Attributs ATTRLNKDEF;;;;;;;;
 # ##############################################################################;;;;;;;;
