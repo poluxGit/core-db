@@ -26,7 +26,7 @@ ___
 * [x] Data Management : Procédures stockées pour gestion des liens Document/Tables de références (Catégories,Tiers,Fichiers)
 * [x] Internal : Instanciation automatique des metadonnées (sans récupération de valeurs)
 
-## Technical Documentation
+## Technical Documentation - TODO UPDATE - OBSO
 ### Prefix des objects
 
 | Prefix     | Description   | Commentaires  |
