@@ -2,10 +2,11 @@
 # ##############################################################################;;;;;;;;
 # TYPE;UNIQUE_NAME;SHORT_TITLE;COMMENT;LONG_TITLE;SIGLE;PROPAGATE_LNK;;
 OBJC;DOCUMENT;Document;Document ECM;Document ECM;DOC;;;
-OBJS;CATEGORIE;Categorie;Categorie de regroupement de document.;Categorie de regroupement de document.;CAT;;;
-OBJS;TIER;Tier;Tier divers.;Tier divers.;TIE;;;
+OBJS;CATEGORIE;Categorie;Categorie de document;Categorie de document;CAT;;;
+OBJS;TIER;Tier;Tier de document;Tier de document;TIE;;;
 OBJS;FICHIER;Fichier;Fichier physique;Fichier Physique;FIC;;;
 OBJS;TYPEDOC;TypeDoc;Type de document;Type de document;TDOC;;;
+OBJS;LIBRAIRIE;Librairie;Librairie de document;Librairie de document;LIB;;;
 ;;;;;;;;
 # Pour les Liens LNK;;;;;;;;
 # ##############################################################################;;;;;;;;
@@ -25,7 +26,11 @@ ATTROBJDEF;DOCUMENT;ATTR_TYPEDOC;Type;Type du document;Type du document;TEXT;FAC
 ATTROBJDEF;FICHIER;ATTR_FILE;Fichier;Fichier source;Fichier source;FILE;;
 ATTROBJDEF;FICHIER;ATTR_FILESIZE;Taille;Taille du fichier;Taille du fichier;LONG;0;
 ATTROBJDEF;FICHIER;ATTR_FILEEXT;Extension;Extension du fichier;Extension du fichier;TEXT;;
+ATTROBJDEF;FICHIER;ATTR_FILEPATH;Repertoire;Repertoire du fichier;Repertoire du fichier;DIR;;
 ATTROBJDEF;CATEGORIE;ATTR_GRP_CAT;Groupe;Groupe de categorie;Groupe de categorie;TEXT;Non defini;
+ATTROBJDEF;TIER;ATTR_GRP_TIER;Groupe;Groupe de tier;Groupe de tier;TEXT;Non defini;
+ATTROBJDEF;LIBRAIRIE;ATTR_RACINE;Repertoire;Repertoire racine de la librairie;Repertoire racine de la librairie;DIR;;
+ATTROBJDEF;TIER;ATTR_;Groupe;Groupe de tier;Groupe de tier;TEXT;Non defini;
 ATTROBJDEF;TIER;ATTR_GRP_TIER;Groupe;Groupe de tier;Groupe de tier;TEXT;Non defini;
 ;;;;;;;;
 # Pour les Attributs ATTRLNKDEF;;;;;;;;

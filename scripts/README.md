@@ -7,7 +7,6 @@
 |Directory name|Comment|
 |--------------|-------|
 |business-models   | Business Models related patterns.   |
-|releases   |  Released SQL Scripts.  |
 |wip   | Work in progress.   |
 
 
@@ -40,6 +39,15 @@
   - [ ] From CSV file attrlnk ? Complex/Simple ?
 
 #### TODO List - To plan
-* [ ] NewTask
+* [ ] Intégrer la gestion d'attribut sur objet (BID ? / TID ?).
+  - [ ] Script de génération PHP - Impacts
+  - [ ] Mise à jour des Modèles SQL
+  - [ ] Tests de génération
+* [ ] Intégrer la gestion de définition d'objet (INSERTS)
+  - [ ] Script de génération PHP - Impacts
+  - [ ] Mise à jour des Modèles SQL (Générique OBJS / OBJC)
 * [ ] Implement Generic function to getPreviousObject in case of Complex
   - [ ] Impact Generic Complex Object Pattern
+* [ ] Modèle Excel afin de faciliter la construction du fichier CSV.
+  - [ ] Intégration de Ribbons Excel
+  - [ ] Boutons ajout Objet
