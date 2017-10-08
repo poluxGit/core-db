@@ -14,6 +14,10 @@
  $dbobj_prefix = '';
  $input_csv_file = '';
  $output_filename = '';
+ $cObjectsAttributes = [];
+ $aComplexObjects = [];
+ $aSimpleObjects = [];
+
 
 // Nombre arguments OK ?
 if($argc != 5 || is_null($argv))
@@ -31,7 +35,6 @@ function manageLine($pArrData,$pIntRowCount){
 
   if(count($pArrData)>=1 && !empty($pArrData[0]))
   {
-
     $lStrMsg = '';
     // According type of line (first information)...
     switch(strtoupper($pArrData[0]))
@@ -83,6 +86,7 @@ function generateSimpleObject($pArrData,$pStrOutputfile){
 
   global $target_db;
   global $dbobj_prefix;
+  global $aSimpleObjects;
 
   // get pattern file ...
   $patternfile = './patterns/OBJS.sql';
@@ -130,18 +134,22 @@ function generateSimpleObject($pArrData,$pStrOutputfile){
   $replacements[$idxfield] = $lStrSiglum;
   $idxfield++;
 
+  // Store ObjectName into global array => for view definition generation !
+  array_push($aSimpleObjects,$lStrObjectName);
+
   // preg_replace($patterns, $replacements, $patternContent);
   file_put_contents($pStrOutputfile,preg_replace($patterns, $replacements, $patternContent),FILE_APPEND);
 
 }//end generateSimpleObject()
 
 /**
- *
+ * Generate a Complex Objects
  */
 function generateComplexObject($pArrData,$pStrOutputfile){
 
   global $target_db;
   global $dbobj_prefix;
+  global $aComplexObjects;
 
   // get pattern file ...
   $patternfile = './patterns/OBJC.sql';
@@ -197,6 +205,10 @@ function generateComplexObject($pArrData,$pStrOutputfile){
   $replacements[$idxfield] = ucfirst(strtolower($lStrObjectName));
   $idxfield++;
 
+  // Store ObjectName into global array => for view definition generation !
+  array_push($aComplexObjects,$lStrObjectName);
+
+
   // preg_replace($patterns, $replacements, $patternContent);
   file_put_contents($pStrOutputfile,preg_replace($patterns, $replacements, $patternContent),FILE_APPEND);
 }//end generateComplexObject()
@@ -208,6 +220,8 @@ function generateAttributeDefinitionOnObject($pArrData,$pStrOutputfile){
 
   global $target_db;
   global $dbobj_prefix;
+  global $aComplexObjects;
+  global $cObjectsAttributes;
 
   // get pattern file ...
   $patternfile = './patterns/ATTROBJDEF.sql';
@@ -252,8 +266,12 @@ function generateAttributeDefinitionOnObject($pArrData,$pStrOutputfile){
   $replacements[$idxfield] = $lStrDefault;
   $idxfield++;
 
+  // Specific store only for complex Object on attribute
+  if(!array_key_exists($lStrObjectName,$cObjectsAttributes)){
+    $cObjectsAttributes[$lStrObjectName] = [];
+  }
+  array_push($cObjectsAttributes[$lStrObjectName],$lStrSTitle);
 
-  // preg_replace($patterns, $replacements, $patternContent);
   file_put_contents($pStrOutputfile,preg_replace($patterns, $replacements, $patternContent),FILE_APPEND);
 }//end generateAttributeDefinition()
 
@@ -358,12 +376,91 @@ function generateAttributeDefinitionOnLink($pArrData,$pStrOutputfile){
   $replacements[$idxfield] = $lStrDefault;
   $idxfield++;
 
-
   // preg_replace($patterns, $replacements, $patternContent);
   file_put_contents($pStrOutputfile,preg_replace($patterns, $replacements, $patternContent),FILE_APPEND);
 }//end generateAttributeDefinitionOnLink()
 
+/**
+ * Generate a complex Object SQL view
+ */
+function generateComplexObjectView($pStrOutputfile){
 
+  global $target_db;
+  global $dbobj_prefix;
+  global $aComplexObjects;
+  global $aSimpleObjects;
+  global $cObjectsAttributes;
+
+  // get pattern files ...
+  $patternfileAll = './patterns/OBJVIEWC_ALL.sql';
+  $patternContentAll = file_get_contents($patternfileAll);
+
+  $patternfileAllS = './patterns/OBJVIEWS_ALL.sql';
+  $patternContentAllS = file_get_contents($patternfileAllS);
+
+  $patternfileLast = './patterns/OBJVIEW_LAST.sql';
+  $patternContentLast = file_get_contents($patternfileLast);
+
+  // For each Complex Objects having attributes
+  foreach($cObjectsAttributes as $lStrObjectName => $lCObjAttribute)
+  {
+    // Parameters to replace !
+    $idxfield = 0;
+    $patterns = array();
+    $replacements = array();
+    $lStrSQLAttr = "";
+    $lStrSQLFrom = "";
+    $lStrSQLWhere = "";
+    $lStrSQLWhereLast = "";
+
+    // CREATE VIEW
+    $patterns[$idxfield] = '/OBJNAME/';
+    $replacements[$idxfield] = strtoupper($lStrObjectName);
+    $idxfield++;
+
+    // FROM - Building FROM Part of SQL Query defining Object' View
+    $lStrSQLFrom = sprintf("`%s` obj \n",$dbobj_prefix.'_'.strtoupper($lStrObjectName));
+
+    // for each attributes recorded!
+    $lIntIdxAttr = 1;
+    foreach($lCObjAttribute as $lStrAttributeSTitle)
+    {
+      $lStrSQLAttr .= sprintf(", aobj%d.attr_value AS `%s` \n",$lIntIdxAttr,$lStrAttributeSTitle);
+      $lStrSQLFrom .= sprintf(
+        "LEFT JOIN CORE_ATTROBJECTS aobj%d ON (aobj%d.stitle = '%s' AND aobj%d.obj_tid = obj.tid) \n",
+        $lIntIdxAttr,
+        $lIntIdxAttr,
+        $lStrAttributeSTitle,
+        $lIntIdxAttr);
+
+      $lIntIdxAttr++;
+    }
+
+    $patterns[$idxfield] = '/SQL_QUERY_SELECT/';
+    $replacements[$idxfield] = $lStrSQLAttr;
+    $idxfield++;
+
+    $patterns[$idxfield] = '/DBPREFIX/';
+    $replacements[$idxfield] = $dbobj_prefix;
+    $idxfield++;
+
+    $patterns[$idxfield] = '/SQL_QUERY_FROM/';
+    $replacements[$idxfield] = $lStrSQLFrom;
+    $idxfield++;
+
+    if(in_array($lStrObjectName,$aSimpleObjects)){
+      file_put_contents($pStrOutputfile,preg_replace($patterns, $replacements, $patternContentAllS),FILE_APPEND);
+    }else{
+      // One more value for LAST View : OBJECT_NAME_UCF
+      file_put_contents($pStrOutputfile,preg_replace($patterns, $replacements, $patternContentAll),FILE_APPEND);
+      $patterns[$idxfield] = '/OBJECT_NAME_UCF/';
+      $replacements[$idxfield] = ucfirst(strtolower($lStrObjectName));
+      $idxfield++;
+
+      file_put_contents($pStrOutputfile,preg_replace($patterns, $replacements, $patternContentLast),FILE_APPEND);
+    }
+  }// next Complex Objects
+}//end generateComplexObjectView()
 
 
 // <------------------------- begin of the script -------------------------> //
@@ -390,6 +487,9 @@ if (($handle = @fopen($input_csv_file, "r")) !== FALSE) {
   }
 
   fclose($handle);
+
+  // Defining views!
+  generateComplexObjectView($output_filename);
 }
 else {
   echo "ERROR : '".$argv[1]."' can't be reached ! \n";

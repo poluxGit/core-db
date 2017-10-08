@@ -20,7 +20,7 @@ echo "toto"
 
 # Variables
 SCHEMA=$1
-RELEASES_DIR_ROOT=../releases
+RELEASES_DIR_ROOT=../_tmp
 ECM_DICO_CSVFILE=./ecm-pattern/ECM.csv
 GENDATE=`date +%Y-%m-%d_%H%M%S`
 OUTPUT_FILE=ECM-SQL-SCRIPT_${GENDATE}.sql

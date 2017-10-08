@@ -1,5 +1,5 @@
 # SQL Scripts directory
-
+- ---
 ## Project Organization
 
 #### Worskspace Directories
@@ -14,6 +14,7 @@
 #### Build commands
 
 - CORE DB Packaging
+
 
 ```shell
 ./release-core.sh <TARGET_SCHEMA> <MajorVersion> <MinorVersion>
@@ -34,12 +35,11 @@
 #### TODO List - Next Release
 * [x] Integrate Attributes Definition First instanciation into TRIGGERS after update on Complex Object/On Simple Object too.
   - [x] Impact Generic Pattern Trigger definition
-* [ ] Implement Generic function to getPreviousObject in case of Complex
-  - [ ] Impact Generic Complex Object Pattern
-* [ ] Add View defintion SQL for Object
-  - [ ] From CSV file attrobj ? Complex/Simple ?
+* [x] Add View defintion SQL for Object
+  - [x] From CSV file attrobj ? Complex/Simple ?
   - [ ] From CSV file attrlnk ? Complex/Simple ?
-  - [ ] Find a way to auto-update view definition (triggers on CORE_ATTRDEFS)
 
 #### TODO List - To plan
 * [ ] NewTask
+* [ ] Implement Generic function to getPreviousObject in case of Complex
+  - [ ] Impact Generic Complex Object Pattern
