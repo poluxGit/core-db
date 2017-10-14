@@ -9,7 +9,7 @@
 -- @author : poluxGit <polux@poluxfr.org>                                     --
 -- -------------------------------------------------------------------------- --
 -- Database version : 00.02                                              --
--- Generation time : 2017-10-08_22:36:53                                                 --
+-- Generation time : 2017-10-09_00:37:15                                                 --
 -- -------------------------------------------------------------------------- --
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;

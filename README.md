@@ -1,10 +1,15 @@
-# MyECM-DB
+# Core Database
 
-MyECM Application - Database Conception and implementation.
+CORE Database Project
 ___
-GIT Repository : [myecm-db](https://github.com/poluxGit/myecm-db.git)
+GIT Repository : [core-db](https://github.com/poluxGit/core-db.git)
 
-## Informations sur la structure de la base de données
+# 1. TIMESTAMP
+2. toto
+3. lkfmld
+4.
+
+## Organisation du projet
 
 ```
 Version Min Database : Maria DB (Synology)
