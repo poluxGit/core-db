@@ -12,7 +12,6 @@ echo "***********************************"
 echo "* SQL RELEASE SCRIPTS v0.1 @polux *"
 echo "***********************************"
 echo ""
-
 # Verifcation du nombre d'argument
 if [ $# -ne 3 ]
 then
@@ -27,11 +26,11 @@ VMAJ=$(printf "%02d\n" $2)
 VMIN=$(printf "%02d\n" $3)
 DATEVAL=`date +%Y%m%d`
 RELEASES_TMP_FILE=./_tmp/$SCHEMA.sql
-RELEASES_DIR_ROOT=../releases
+RELEASES_DIR_ROOT=./releases
 RELEASES_DIR=$RELEASES_DIR_ROOT/$SCHEMA-R-$VMAJ.$VMIN
 SQL_OUTFILE=$RELEASES_DIR/DB-SCRIPTS_$SCHEMA.sql
-SQL_FINAL=$RELEASES_DIR/DB-SCRIPTS_$SCHEMA-R-$VMAJ.$VMIN-final.${DATEVAL}.sql
-SCRIPTS_DIR=./wip
+SQL_FINAL=$RELEASES_DIR/$SCHEMA-R-$VMAJ.$VMIN-final.${DATEVAL}.sql
+SCRIPTS_DIR=./sources/sql
 GENDATE=`date +%Y-%m-%d_%H:%M:%S`
 
 echo "* Releasing version $VMAJ.$VMIN of $SCHEMA database schema into '$RELEASES_DIR'."

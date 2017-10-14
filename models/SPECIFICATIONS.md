@@ -2,7 +2,7 @@
 
 ## Modelisation
 
-![MOD - MyECM](schema/myecm-database-schema.png "MyECM - Database")
+![MOD - MyECM](schema/core-database-schema.png "Core Database")
 
 ## Tables
 

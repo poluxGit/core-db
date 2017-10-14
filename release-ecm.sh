@@ -16,25 +16,21 @@ then
    exit 1;
 fi
 
-echo "toto"
-
 # Variables
 SCHEMA=$1
-RELEASES_DIR_ROOT=../_tmp
-ECM_DICO_CSVFILE=./ecm-pattern/ECM.csv
+RELEASES_DIR_ROOT=./_tmp
+ECM_DICO_CSVFILE=./business-models/ecm-pattern/ECM.csv
 GENDATE=`date +%Y-%m-%d_%H%M%S`
-OUTPUT_FILE=ECM-SQL-SCRIPT_${GENDATE}.sql
+OUTPUT_FILE=./releases/ECM-SQL-SCRIPT_${GENDATE}.sql
 
 echo "* Generating SQL scripts for ECM Module into $SCHEMA database."
 echo "- CSV definition file from '$ECM_DICO_CSVFILE'."
 
 # Génération du SQL
 echo "- Starting SQL script generation from a CSV Dictionnary file."
-cd ./business-models
-$(`php ./generate_sql-db_scripts.php $SCHEMA ECM $ECM_DICO_CSVFILE $RELEASES_DIR_ROOT/ECM.sql`)
+php ./sources/generate_sql-db_scripts.php $SCHEMA ECM $ECM_DICO_CSVFILE $RELEASES_DIR_ROOT/ECM.sql
 echo "- Ending SQL script generation !"
 echo ""
-cat $RELEASES_DIR_ROOT/$SCHEMA.sql $RELEASES_DIR_ROOT/ECM.sql >> ../$OUTPUT_FILE
-cd ..
+cat $RELEASES_DIR_ROOT/$SCHEMA.sql $RELEASES_DIR_ROOT/ECM.sql >> $OUTPUT_FILE
 echo ""
 exit 0

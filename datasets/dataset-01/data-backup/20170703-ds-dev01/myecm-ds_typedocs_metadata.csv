@@ -1,9 +1,0 @@
-id,uid,code,typedoc_code,title,description,order_number,isMandatory,json_data,ctime,cuser,utime,uuser,isActive
-0000000001,TMDC-0000000001,TMDC-FACT-0000000001,FACT,Montant,"Montant de la facture.",1,1,"{'type':'numeric','pattern':'%d €'}","2017-06-05 01:48:44",polux@%,NULL,NULL,1
-0000000002,TMDC-0000000002,TMDC-AIMP-0000000001,AIMP,"Année imposée","Année fiscale d'imposition",1,1,{'type':'year'},"2017-06-05 01:48:44",polux@%,NULL,NULL,1
-0000000003,TMDC-0000000003,TMDC-BSAL-0000000001,BSAL,"Montant NET","Montant NET imposable.",1,1,"{'type':'numeric','pattern':'%d €'}","2017-06-05 01:48:44",polux@%,NULL,NULL,1
-0000000004,TMDC-0000000004,TMDC-BSAL-0000000002,BSAL,"Montant BRUT","Montant BRUT.",2,1,"{'type':'numeric','pattern':'%d €'}","2017-06-05 01:48:44",polux@%,NULL,NULL,1
-0000000005,TMDC-0000000005,TMDC-CEMB-0000000001,CEMB,"Aéroport Départ","Aéroport de départ.",1,0,{'type':'text'},"2017-06-05 01:48:44",polux@%,NULL,NULL,1
-0000000006,TMDC-0000000006,TMDC-CEMB-0000000002,CEMB,"Aéroport Arrivée","Aéroport d'arrivée.",2,0,{'type':'text'},"2017-06-05 01:48:44",polux@%,NULL,NULL,1
-0000000007,TMDC-0000000007,TMDC-AVCT-0000000001,AVCT,Montant,"Montant de la contravention.",1,1,"{'type':'numeric','pattern':'%d €'}","2017-06-05 01:48:44",polux@%,NULL,NULL,1
-0000000008,TMDC-0000000008,TMDC-REMB-0000000001,REMB,Montant,"Montant du remboursement",1,1,"{'type':'numeric','pattern':'%d €'}","2017-06-25 22:46:48",polux@%,"2017-06-25 22:46:55",polux@%,1

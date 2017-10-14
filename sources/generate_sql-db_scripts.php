@@ -89,7 +89,7 @@ function generateSimpleObject($pArrData,$pStrOutputfile){
   global $aSimpleObjects;
 
   // get pattern file ...
-  $patternfile = './patterns/OBJS.sql';
+  $patternfile = './sources/patterns/OBJS.sql';
   $patternContent = file_get_contents($patternfile);
 
   // ****** Getting & validating CSV Data !
@@ -152,7 +152,7 @@ function generateComplexObject($pArrData,$pStrOutputfile){
   global $aComplexObjects;
 
   // get pattern file ...
-  $patternfile = './patterns/OBJC.sql';
+  $patternfile = './sources/patterns/OBJC.sql';
   $patternContent = file_get_contents($patternfile);
 
   // ****** Getting & validating CSV Data !
@@ -224,7 +224,7 @@ function generateAttributeDefinitionOnObject($pArrData,$pStrOutputfile){
   global $cObjectsAttributes;
 
   // get pattern file ...
-  $patternfile = './patterns/ATTROBJDEF.sql';
+  $patternfile = './sources/patterns/ATTROBJDEF.sql';
   $patternContent = file_get_contents($patternfile);
 
   // ****** Getting & validating CSV Data !
@@ -284,7 +284,7 @@ function generateLink($pArrData,$pStrOutputfile){
     global $dbobj_prefix;
 
     // get pattern file ...
-    $patternfile = './patterns/LNK.sql';
+    $patternfile = './sources/patterns/LNK.sql';
     $patternContent = file_get_contents($patternfile);
 
     // ****** Getting & validating CSV Data !
@@ -331,7 +331,7 @@ function generateAttributeDefinitionOnLink($pArrData,$pStrOutputfile){
   global $dbobj_prefix;
 
   // get pattern file ...
-  $patternfile = './patterns/ATTRLNKDEF.sql';
+  $patternfile = './sources/patterns/ATTRLNKDEF.sql';
   $patternContent = file_get_contents($patternfile);
 
   // ****** Getting & validating CSV Data !
@@ -392,13 +392,13 @@ function generateComplexObjectView($pStrOutputfile){
   global $cObjectsAttributes;
 
   // get pattern files ...
-  $patternfileAll = './patterns/OBJVIEWC_ALL.sql';
+  $patternfileAll = './sources/patterns/OBJVIEWC_ALL.sql';
   $patternContentAll = file_get_contents($patternfileAll);
 
-  $patternfileAllS = './patterns/OBJVIEWS_ALL.sql';
+  $patternfileAllS = './sources/patterns/OBJVIEWS_ALL.sql';
   $patternContentAllS = file_get_contents($patternfileAllS);
 
-  $patternfileLast = './patterns/OBJVIEW_LAST.sql';
+  $patternfileLast = './sources/patterns/OBJVIEW_LAST.sql';
   $patternContentLast = file_get_contents($patternfileLast);
 
   // For each Complex Objects having attributes
