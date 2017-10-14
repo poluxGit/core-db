@@ -13,10 +13,18 @@ Informations pour développeur
 
 ## Scripts de génération des scripts SQL finaux
 
-- Dans un environnement UNIX/LINUX (Shell)
+- CORE Schema
 
 ```   
 ./scripts/release-core.sh <TARGET_DB_SCHEMA> <MAJOR_VERSION> <MINOR_VERSION>
 
 ```
 [*Source du script*](./scripts/release-core.sh)
+
+- Modèle Métier spécifique
+
+```   
+./scripts/release-ecm.sh <TARGET_SCHEMA>
+```
+
+[*Source du script*](./scripts/release-ecm.sh)
