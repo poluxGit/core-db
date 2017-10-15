@@ -565,8 +565,6 @@ class CSVBusinessPatternSQLGenerator
       $replacements[$idxfield] = $lStrSQLFrom;
       $idxfield++;
 
-      print_r($this->aFileLines);
-
       if(array_key_exists(strtoupper($lStrObjectName),$this->aFileLines['OBJS'])){
         file_put_contents($pStrOutputFile,preg_replace($patterns, $replacements, $patternContentAllS),FILE_APPEND);
       }else{
