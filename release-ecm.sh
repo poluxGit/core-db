@@ -21,7 +21,7 @@ SCHEMA=$1
 RELEASES_DIR_ROOT=./_tmp
 ECM_DICO_CSVFILE=./business-models/ecm-pattern/ECM.csv
 GENDATE=`date +%Y-%m-%d_%H%M%S`
-OUTPUT_FILE=./releases/ECM-SQL-SCRIPT_${GENDATE}.sql
+OUTPUT_FILE=./releases/ECM/ECM-SQL-SCRIPT_${GENDATE}.sql
 
 echo "* Generating SQL scripts for ECM Module into $SCHEMA database."
 echo "- CSV definition file from '$ECM_DICO_CSVFILE'."

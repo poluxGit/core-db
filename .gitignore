@@ -2,3 +2,4 @@ models/*.bak
 /models/myecm-database-model.mwb.bak
 *.bak
 _tmp
+/releases/*/*sql
